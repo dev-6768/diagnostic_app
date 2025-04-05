@@ -2,10 +2,13 @@ import 'package:auto_route/auto_route.dart';
 import 'package:diagnostic_app/const/app_urls.dart';
 import 'package:diagnostic_app/const/styles/app_colors.dart';
 import 'package:diagnostic_app/features/add_to_cart_page/view/add_to_cart_page.dart';
+import 'package:diagnostic_app/core/router/router.gr.dart';
 import 'package:diagnostic_app/features/home/controller/pod/carousel_banner_pod.dart';
 import 'package:diagnostic_app/features/home/controller/pod/pathology_test_pod.dart';
 import 'package:diagnostic_app/features/home/controller/pod/routine_test_pod.dart';
+import 'package:diagnostic_app/features/home/controller/pod/view_cart_pod.dart';
 import 'package:diagnostic_app/features/home/view/widget/home_page_carousel_widget.dart';
+import 'package:diagnostic_app/features/terms_and_conditions/controller/pod/about_us_pod.dart';
 import 'package:diagnostic_app/shared/riverpod_ext/asynvalue_easy_when.dart';
 import 'package:diagnostic_app/shared/widget/cache_network_image_widget.dart';
 import 'package:flutter/material.dart';
@@ -23,14 +26,79 @@ class HomePage extends StatelessWidget {
   }
 }
 
-class HomeView extends ConsumerWidget {
+class HomeView extends ConsumerStatefulWidget {
   const HomeView({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<HomeView> createState() => _HomeViewState();
+}
+
+class _HomeViewState extends ConsumerState<HomeView> {
+  int cartItemsCount = 0;
+  @override
+  Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
+          actions: [
+            // cart button
+            Consumer(
+              builder: (context, ref, child) {
+                final viewCartAsync = ref.watch(viewCartProvider);
+                return viewCartAsync.easyWhen(data: (viewCartModel) {
+                  return Badge(
+                    label: Text(cartItemsCount.toString()),
+                    backgroundColor: AppColors.kErrorColor,
+                    child: IconButton(
+                      onPressed: () {
+                        context.navigateTo(
+                          CartRoute(
+                            cartItems: viewCartModel.cartData,
+                          ),
+                        );
+                      },
+                      icon: const Icon(
+                        Icons.shopping_cart,
+                        color: AppColors.kBlackColor,
+                      ),
+                    ),
+                  );
+                });
+              },
+            ),
+            //a popup menu button that shows options
+            Consumer(
+              builder: (context, ref, child) {
+                final aboutUsAsync = ref.watch(aboutUsProvider);
+                return aboutUsAsync.easyWhen(data: (aboutUsModel) {
+                  return PopupMenuButton(
+                    icon: const Icon(
+                      Icons.more_vert,
+                      color: AppColors.kBlackColor,
+                    ),
+                    itemBuilder: (context) => [
+                      PopupMenuItem(
+                        onTap: () {
+                          context.navigateTo(
+                            TermsAndConditionRoute(contentBody: aboutUsModel.contentData.content),
+                          );
+                        },
+                        child: const Text('About Us'),
+                      ),
+                      PopupMenuItem(
+                        onTap: () {
+                          context.navigateTo(
+                            ContactDetailsRoute(),
+                          );
+                        },
+                        child: const Text('Contact Us'),
+                      ),
+                    ],
+                  );
+                });
+              },
+            ),
+          ],
           title: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -50,7 +118,7 @@ class HomeView extends ConsumerWidget {
               ),
             ],
           ),
-          centerTitle: true,
+          automaticallyImplyLeading: false,
           backgroundColor: Colors.white,
           foregroundColor: Colors.black,
           elevation: 0,
@@ -125,6 +193,10 @@ class HomeView extends ConsumerWidget {
                                 ),
                                 leading: Text(
                                   '${routineTestModel.routineTestData[index].testId}.',
+                                ),
+                                trailing: IconButton(
+                                  onPressed: () {},
+                                  icon: Icon(Icons.add_shopping_cart_sharp),
                                 ),
                               );
                             },
@@ -214,6 +286,10 @@ class HomeView extends ConsumerWidget {
                                   width: 50,
                                   height: 50,
                                   fit: BoxFit.cover,
+                                ),
+                                trailing: IconButton(
+                                  onPressed: () {},
+                                  icon: Icon(Icons.add_shopping_cart_sharp),
                                 ),
                               );
                             },
