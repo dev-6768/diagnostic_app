@@ -1,21 +1,17 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:diagnostic_app/bootstrap.dart';
-import 'package:diagnostic_app/const/app_urls.dart';
 import 'package:diagnostic_app/const/styles/app_colors.dart';
 import 'package:diagnostic_app/core/router/router.gr.dart';
 import 'package:diagnostic_app/features/cart/controller/pod/add_to_cart_pod.dart';
 import 'package:diagnostic_app/features/home/controller/pod/carousel_banner_pod.dart';
-import 'package:diagnostic_app/features/home/controller/pod/pathology_test_pod.dart';
 import 'package:diagnostic_app/features/home/controller/pod/routine_test_pod.dart';
 import 'package:diagnostic_app/features/home/controller/pod/view_cart_pod.dart';
 import 'package:diagnostic_app/features/home/view/widget/home_page_carousel_widget.dart';
 import 'package:diagnostic_app/features/terms_and_conditions/controller/pod/about_us_pod.dart';
 import 'package:diagnostic_app/shared/riverpod_ext/asynvalue_easy_when.dart';
-import 'package:diagnostic_app/shared/widget/cache_network_image_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:velocity_x/velocity_x.dart';
-
 
 @RoutePage()
 class HomePage extends StatelessWidget {
@@ -35,7 +31,7 @@ class HomeView extends ConsumerStatefulWidget {
 }
 
 class _HomeViewState extends ConsumerState<HomeView> {
-  int cartItemsCount = 0;
+  // int cartItemsCount = 0;
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -48,7 +44,7 @@ class _HomeViewState extends ConsumerState<HomeView> {
                 final viewCartAsync = ref.watch(viewCartProvider);
                 return viewCartAsync.easyWhen(data: (viewCartModel) {
                   return Badge(
-                    label: Text(cartItemsCount.toString()),
+                    label: Text(viewCartModel.cartData.length.toString()),
                     backgroundColor: AppColors.kErrorColor,
                     child: IconButton(
                       onPressed: () {
@@ -187,105 +183,26 @@ class _HomeViewState extends ConsumerState<HomeView> {
                                 trailing: IconButton(
                                   onPressed: () async {
                                     talker.debug("Response : hello added item");
-                                    final response = await ref.read(addToCartProvider([1, int.tryParse(routineTestModel.routineTestData[index].price) ?? 0]).future);
+                                    talker.debug(
+                                        "Response : ${routineTestModel.routineTestData[index].price}");
+                                    final response = await ref.read(addToCartProvider(
+                                      AddToCartRequestData(
+                                        quantity: 1,
+                                        price: double.tryParse(
+                                                routineTestModel.routineTestData[index].price) ??
+                                            0.0,
+                                        testName: routineTestModel.routineTestData[index].testName,
+                                      ),
+                                    ).future);
                                     talker.debug("Response : $response");
-                                  },
-                                  icon: Icon(Icons.add_shopping_cart_sharp),
-                                ),
-                              );
-                            },
-                          ),
-                        );
-                      },
-                    );
-                  },
-                ),
-                Text(
-                  'Pathology Test',
-                  style: TextStyle(
-                    fontWeight: FontWeight.w400,
-                    fontSize: 20,
-                  ),
-                ).objectCenterLeft(),
-                //patho test
-                Consumer(
-                  builder: (context, ref, child) {
-                    final pathologyTestAsync = ref.watch(pathologyTestProvider);
-                    return pathologyTestAsync.easyWhen(
-                      data: (pathologyTestModel) {
-                        return SizedBox(
-                          height: 500,
-                          child: ListView.builder(
-                            primary: false,
-                            itemCount: pathologyTestModel.pathologyTestData.length,
-                            // physics: const NeverScrollableScrollPhysics(),
-                            shrinkWrap: true,
-                            itemBuilder: (context, index) {
-                              return ListTile(
-                                title: Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  spacing: 2,
-                                  children: [
-                                    Text(
-                                        '${pathologyTestModel.pathologyTestData[index].packageId}. '),
-                                    Flexible(
-                                      child: Text(
-                                        pathologyTestModel.pathologyTestData[index].testName,
-                                        overflow: TextOverflow.visible,
+                                    setState(() {});
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text(
+                                          "${routineTestModel.routineTestData[index].testName} added to cart",
+                                        ),
                                       ),
-                                    ),
-                                  ],
-                                ),
-                                subtitle: Column(
-                                  spacing: 2,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text('₹${pathologyTestModel.pathologyTestData[index].price}'),
-                                    Text(
-                                      '₹${pathologyTestModel.pathologyTestData[index].originalPrice}',
-                                      style: TextStyle(
-                                        color: AppColors.kGrey400,
-                                        decoration: TextDecoration.lineThrough,
-                                      ),
-                                    ),
-                                    Wrap(
-                                      spacing: 5,
-                                      runSpacing: 10,
-                                      alignment: WrapAlignment.start,
-                                      children:
-                                          pathologyTestModel.pathologyTestData[index].packages.map(
-                                        (packageDetails) {
-                                          return Container(
-                                            padding: const EdgeInsets.symmetric(
-                                              vertical: 5,
-                                              horizontal: 10,
-                                            ),
-                                            decoration: BoxDecoration(
-                                              border: Border.all(
-                                                color: AppColors.kGrey400,
-                                                width: 1,
-                                              ),
-                                              borderRadius: BorderRadius.circular(10),
-                                            ),
-                                            child: Text(packageDetails.testName),
-                                          );
-                                        },
-                                      ).toList(),
-                                    ),
-                                  ],
-                                ),
-                                leading: CacheNetworkImageWidget(
-                                  imageUrl:
-                                      '${AppUrls.imgBaseUrlForPathoTest}${pathologyTestModel.pathologyTestData[index].testPhoto}',
-                                  width: 50,
-                                  height: 50,
-                                  fit: BoxFit.cover,
-                                ),
-                                trailing: IconButton(
-                                  onPressed: () async {
-                                    talker.debug("Response : hello added item");
-                                    // final response = await ref.read(addToCartProvider([1, int.tryParse(pathologyTestModel.pathologyTestData[index].price)!]).future);
-                                    // talker.debug("Response : $response");
+                                    );
                                   },
                                   icon: Icon(Icons.add_shopping_cart_sharp),
                                 ),
