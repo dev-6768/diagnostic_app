@@ -8,6 +8,7 @@ import 'package:diagnostic_app/data/model/delete_cart_response_model.dart';
 import 'package:diagnostic_app/data/model/pathology_test_model.dart';
 import 'package:diagnostic_app/data/model/routine_test_model.dart';
 import 'package:diagnostic_app/data/model/update_cart_response_model.dart';
+import 'package:diagnostic_app/data/model/add_to_cart_model.dart';
 import 'package:diagnostic_app/data/model/view_cart_model.dart';
 import 'package:diagnostic_app/shared/exception/base_exception.dart';
 import 'package:dio/dio.dart';
@@ -101,6 +102,16 @@ class ApiHelper {
     if (result.statusCode == 200 || result.statusCode == 201) {
       final parsedJson = jsonDecode(result.data);
       return Success(UpdateCartResponseModel.fromMap(parsedJson));
+    } else {
+      return Error(APIException.fromMap(result.data));
+    }
+  }
+
+  Future<Result<AddToCartResponseModel, APIException>> addToCart({required int quantity, required int price}) async {
+    final result = await dio.get("https://sanitascare.health/webservice/service.php?action=add_to_cart&user_id=1&unique_id=11111111111&test_name=abc&quantity=$quantity&test_price=$price");
+    if (result.statusCode == 200 || result.statusCode == 201) {
+      final parsedJson = jsonDecode(result.data);
+      return Success(AddToCartResponseModel.fromMap(parsedJson));
     } else {
       return Error(APIException.fromMap(result.data));
     }

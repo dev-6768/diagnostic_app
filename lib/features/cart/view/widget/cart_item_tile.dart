@@ -1,4 +1,6 @@
+import 'package:diagnostic_app/bootstrap.dart';
 import 'package:diagnostic_app/features/cart/controller/pod/delete_cart_pod.dart';
+import 'package:diagnostic_app/features/cart/controller/pod/update_cart_pod.dart';
 import 'package:diagnostic_app/features/cart/view/widget/quantity_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -64,12 +66,20 @@ class CartItemTile extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  QuantityButton(
-                    icon: Icons.remove,
-                    onPressed: () {
-                      // Decrease quantity functionality would go here
+                  Consumer(
+                    builder: (context, ref, child) {
+                      return QuantityButton(
+                        icon: Icons.remove,
+                        onPressed: () {
+                          final response = ref.watch(updateCartProvider([(int.tryParse(cartId) ?? 0), quantity - 1]).future);
+                          talker.debug(response);
+                          // Increase quantity functionality would go here
+                        },
+                      );
                     },
                   ),
+
+                  
                   Container(
                     margin: const EdgeInsets.symmetric(horizontal: 8),
                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
@@ -84,10 +94,18 @@ class CartItemTile extends StatelessWidget {
                       ),
                     ),
                   ),
-                  QuantityButton(
-                    icon: Icons.add,
-                    onPressed: () {
-                      // Increase quantity functionality would go here
+
+                  Consumer(
+                    builder: (context, ref, child) {
+                      return QuantityButton(
+                        icon: Icons.add,
+                        onPressed: () {
+                          final response = ref.watch(updateCartProvider([(int.tryParse(cartId) ?? 0), quantity + 1]).future);
+                          talker.debug(response);
+                          // Increase quantity functionality would go here
+                        },
+                      );
+                      
                     },
                   ),
                 ],

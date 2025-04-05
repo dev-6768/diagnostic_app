@@ -1,8 +1,9 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:diagnostic_app/bootstrap.dart';
 import 'package:diagnostic_app/const/app_urls.dart';
 import 'package:diagnostic_app/const/styles/app_colors.dart';
-import 'package:diagnostic_app/features/add_to_cart_page/view/add_to_cart_page.dart';
 import 'package:diagnostic_app/core/router/router.gr.dart';
+import 'package:diagnostic_app/features/cart/controller/pod/add_to_cart_pod.dart';
 import 'package:diagnostic_app/features/home/controller/pod/carousel_banner_pod.dart';
 import 'package:diagnostic_app/features/home/controller/pod/pathology_test_pod.dart';
 import 'package:diagnostic_app/features/home/controller/pod/routine_test_pod.dart';
@@ -122,17 +123,6 @@ class _HomeViewState extends ConsumerState<HomeView> {
           backgroundColor: Colors.white,
           foregroundColor: Colors.black,
           elevation: 0,
-          actions: [
-            IconButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => AddToCartPage())
-                );
-              },
-              icon: Icon(Icons.shopping_cart)
-            ),
-          ],
         ),
         body: SafeArea(
           child: SingleChildScrollView(
@@ -195,7 +185,11 @@ class _HomeViewState extends ConsumerState<HomeView> {
                                   '${routineTestModel.routineTestData[index].testId}.',
                                 ),
                                 trailing: IconButton(
-                                  onPressed: () {},
+                                  onPressed: () async {
+                                    talker.debug("Response : hello added item");
+                                    final response = await ref.read(addToCartProvider([1, int.tryParse(routineTestModel.routineTestData[index].price) ?? 0]).future);
+                                    talker.debug("Response : $response");
+                                  },
                                   icon: Icon(Icons.add_shopping_cart_sharp),
                                 ),
                               );
@@ -288,7 +282,11 @@ class _HomeViewState extends ConsumerState<HomeView> {
                                   fit: BoxFit.cover,
                                 ),
                                 trailing: IconButton(
-                                  onPressed: () {},
+                                  onPressed: () async {
+                                    talker.debug("Response : hello added item");
+                                    // final response = await ref.read(addToCartProvider([1, int.tryParse(pathologyTestModel.pathologyTestData[index].price)!]).future);
+                                    // talker.debug("Response : $response");
+                                  },
                                   icon: Icon(Icons.add_shopping_cart_sharp),
                                 ),
                               );
