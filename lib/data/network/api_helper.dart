@@ -107,8 +107,8 @@ class ApiHelper {
     }
   }
 
-  Future<Result<AddToCartResponseModel, APIException>> addToCart({required int quantity, required int price}) async {
-    final result = await dio.get("https://sanitascare.health/webservice/service.php?action=add_to_cart&user_id=1&unique_id=11111111111&test_name=abc&quantity=$quantity&test_price=$price");
+  Future<Result<AddToCartResponseModel, APIException>> addToCart({required int quantity, required double price, required String testName}) async {
+    final result = await dio.get("https://sanitascare.health/webservice/service.php?action=add_to_cart&user_id=1&unique_id=11111111111&test_name=$testName&quantity=$quantity&test_price=$price");
     if (result.statusCode == 200 || result.statusCode == 201) {
       final parsedJson = jsonDecode(result.data);
       return Success(AddToCartResponseModel.fromMap(parsedJson));

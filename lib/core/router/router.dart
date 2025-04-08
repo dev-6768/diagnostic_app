@@ -13,7 +13,15 @@ class AppRouter extends RootStackRouter {
     AutoRoute(
       page: HomeRoute.page,
       path: '/home',
+    ),
+    AutoRoute(
+      page: NavbarRoute.page,
+      path: '/navbar',
       initial: true,
+    ),
+    AutoRoute(
+      page: PathologyTestRoute.page,
+      path: '/patho',
     ),
     AutoRoute(
       page: TermsAndConditionRoute.page,
