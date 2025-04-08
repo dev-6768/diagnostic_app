@@ -1,10 +1,12 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:diagnostic_app/bootstrap.dart';
 import 'package:diagnostic_app/const/styles/app_colors.dart';
 import 'package:diagnostic_app/core/router/router.gr.dart';
 import 'package:diagnostic_app/features/cart/controller/pod/cart_notifier_pod.dart';
 import 'package:diagnostic_app/features/home/controller/notifier/expandable_controller.dart';
 import 'package:diagnostic_app/features/home/controller/pod/carousel_banner_pod.dart';
+import 'package:diagnostic_app/features/home/controller/pod/pathology_test_pod.dart';
 import 'package:diagnostic_app/features/home/controller/pod/view_cart_pod.dart';
 import 'package:diagnostic_app/features/home/view/widget/expandable_routine_test_widget.dart';
 import 'package:diagnostic_app/features/home/view/widget/home_page_carousel_widget.dart';
@@ -347,7 +349,7 @@ class _HomeViewState extends ConsumerState<HomeView> {
                                             CrossAxisAlignment.start,
                                         children: [
                                           // Image
-                                          CacheNetworkImageWidget(
+                                          CachedNetworkImage(
                                             imageUrl: testData.testPhoto,
                                             width: double.infinity,
                                             height: 150,
