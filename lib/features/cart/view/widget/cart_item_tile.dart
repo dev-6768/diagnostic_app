@@ -1,7 +1,9 @@
 import 'package:diagnostic_app/bootstrap.dart';
+import 'package:diagnostic_app/features/cart/controller/pod/cart_notifier_pod.dart';
 import 'package:diagnostic_app/features/cart/controller/pod/delete_cart_pod.dart';
 import 'package:diagnostic_app/features/cart/controller/pod/update_cart_pod.dart';
 import 'package:diagnostic_app/features/cart/view/widget/quantity_button.dart';
+import 'package:diagnostic_app/shared/riverpod_ext/asynvalue_easy_when.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -10,6 +12,7 @@ class CartItemTile extends StatelessWidget {
   final String testName;
   final int quantity;
   final double price;
+  final int index;
 
   const CartItemTile({
     super.key,
@@ -17,6 +20,7 @@ class CartItemTile extends StatelessWidget {
     required this.testName,
     required this.quantity,
     required this.price,
+    required this.index,
   });
 
   @override
@@ -71,7 +75,7 @@ class CartItemTile extends StatelessWidget {
                       return QuantityButton(
                         icon: Icons.remove,
                         onPressed: () {
-                          final response = ref.watch(updateCartProvider([(int.tryParse(cartId) ?? 0), quantity - 1]).future);
+                          final response = ref.watch(cartNotifierProvider.notifier).updateCart([(int.tryParse(cartId) ?? 0), -1]);
                           talker.debug(response);
                           // Increase quantity functionality would go here
                         },
@@ -80,19 +84,28 @@ class CartItemTile extends StatelessWidget {
                   ),
 
                   
-                  Container(
-                    margin: const EdgeInsets.symmetric(horizontal: 8),
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.grey.shade300),
-                      borderRadius: BorderRadius.circular(4),
-                    ),
-                    child: Text(
-                      '$quantity',
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+                  Consumer(
+                    builder: (context, ref, child) {
+                      final viewCartAsync = ref.watch(cartNotifierProvider);
+                      return viewCartAsync.easyWhen(data: (viewCartModel) {
+                        return Container(
+                          margin: const EdgeInsets.symmetric(horizontal: 8),
+                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Colors.grey.shade300),
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          child: Text(
+                            viewCartModel.cartData[index].quantity,
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        );
+                      });
+                      
+                      
+                    },
                   ),
 
                   Consumer(
@@ -100,7 +113,7 @@ class CartItemTile extends StatelessWidget {
                       return QuantityButton(
                         icon: Icons.add,
                         onPressed: () {
-                          final response = ref.watch(updateCartProvider([(int.tryParse(cartId) ?? 0), quantity + 1]).future);
+                          final response = ref.watch(cartNotifierProvider.notifier).updateCart([(int.tryParse(cartId) ?? 0), 1]);
                           talker.debug(response);
                           // Increase quantity functionality would go here
                         },
@@ -114,8 +127,8 @@ class CartItemTile extends StatelessWidget {
               Consumer(
                 builder: (context, ref, child) {
                   return GestureDetector(
-                    onTap: () {
-                      ref.read(deleteCartProvider(int.tryParse(cartId)!));
+                    onTap: () async {
+                      await ref.read(cartNotifierProvider.notifier).deleteCart(int.tryParse(cartId) ?? 0);
                       // Remove item functionality would go here
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(

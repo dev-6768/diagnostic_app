@@ -31,8 +31,8 @@ class ViewCartModel {
     String toJson() => json.encode(toMap());
 
     factory ViewCartModel.fromMap(Map<String, dynamic> json) => ViewCartModel(
-        cartData: List<CartData>.from(json["CartData"].map((x) => CartData.fromMap(x))),
-        priceData: PriceData.fromMap((json["PriceData"])),
+        cartData: List<CartData>.from((json["CartData"] ?? []).map((x) => CartData.fromMap(x))),
+        priceData: PriceData.fromMap((json["PriceData"] ?? {})),
         ack: json["Ack"],
         msg: json["msg"],
     );
@@ -80,11 +80,11 @@ class CartData {
     String toJson() => json.encode(toMap());
 
     factory CartData.fromMap(Map<String, dynamic> json) => CartData(
-        cartId: json["cart_id"],
-        testName: json["test_name"],
-        quantity: json["quantity"],
-        unitPrice: json["unit_price"],
-        subtotal: json["subtotal"],
+        cartId: json["cart_id"] ?? "0",
+        testName: json["test_name"] ?? "abc",
+        quantity: json["quantity"] ?? "0",
+        unitPrice: json["unit_price"] ?? "0.00",
+        subtotal: json["subtotal"] ?? "0.00",
     );
 
     Map<String, dynamic> toMap() => {
@@ -123,9 +123,9 @@ class PriceData {
     String toJson() => json.encode(toMap());
 
     factory PriceData.fromMap(Map<String, dynamic> json) => PriceData(
-        totalPrice: json["total_price"],
-        totalQuantity: json["total_quantity"],
-        grandTotal: json["grand_total"],
+        totalPrice: json["total_price"] ?? "0.00",
+        totalQuantity: json["total_quantity"] ?? "0",
+        grandTotal: json["grand_total"] ?? "0.00",
     );
 
     Map<String, dynamic> toMap() => {

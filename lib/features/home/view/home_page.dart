@@ -1,13 +1,13 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:diagnostic_app/bootstrap.dart';
-import 'package:diagnostic_app/const/app_urls.dart';
 import 'package:diagnostic_app/const/styles/app_colors.dart';
 import 'package:diagnostic_app/core/router/router.gr.dart';
-import 'package:diagnostic_app/features/cart/controller/pod/add_to_cart_pod.dart';
+import 'package:diagnostic_app/features/cart/controller/pod/cart_notifier_pod.dart';
+import 'package:diagnostic_app/features/home/controller/notifier/expandable_controller.dart';
 import 'package:diagnostic_app/features/home/controller/pod/carousel_banner_pod.dart';
 import 'package:diagnostic_app/features/home/controller/pod/pathology_test_pod.dart';
-import 'package:diagnostic_app/features/home/controller/pod/routine_test_pod.dart';
 import 'package:diagnostic_app/features/home/controller/pod/view_cart_pod.dart';
+import 'package:diagnostic_app/features/home/view/widget/expandable_routine_test_widget.dart';
 import 'package:diagnostic_app/features/home/view/widget/home_page_carousel_widget.dart';
 import 'package:diagnostic_app/features/terms_and_conditions/controller/pod/about_us_pod.dart';
 import 'package:diagnostic_app/shared/riverpod_ext/asynvalue_easy_when.dart';
@@ -15,7 +15,6 @@ import 'package:diagnostic_app/shared/widget/cache_network_image_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:velocity_x/velocity_x.dart';
-
 
 @RoutePage()
 class HomePage extends StatelessWidget {
@@ -35,70 +34,123 @@ class HomeView extends ConsumerStatefulWidget {
 }
 
 class _HomeViewState extends ConsumerState<HomeView> {
+  final ExpandableController _controller = ExpandableController();
+  int? expandedCardIndex;
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
   int cartItemsCount = 0;
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
+        drawer: Drawer(
+          child: ListView(
+            padding: EdgeInsets.zero,
+            children: <Widget>[
+              const DrawerHeader(
+                decoration: BoxDecoration(
+                  color: Colors.blue,
+                ),
+                child: Text(
+                  'Sanitas Health',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 24,
+                  ),
+                ),
+              ),
+              Consumer(builder: (context, ref, child) {
+                final aboutUsAsync = ref.watch(aboutUsProvider);
+                return aboutUsAsync.easyWhen(data: (aboutUsModel) {
+                  return ListTile(
+                    leading: const Icon(Icons.info),
+                    title: const Text('About Us'),
+                    onTap: () {
+                      // Navigate to About
+                      context.navigateTo(
+                        TermsAndConditionRoute(
+                            contentBody: aboutUsModel.contentData.content),
+                      );
+                    },
+                  );
+                });
+              }),
+              ListTile(
+                leading: const Icon(Icons.settings),
+                title: const Text('Contact Us'),
+                onTap: () {
+                  // Navigate to Settings
+                  context.navigateTo(
+                    ContactDetailsRoute(),
+                  );
+                },
+              ),
+            ],
+          ),
+        ),
         appBar: AppBar(
+          leading: Builder(
+            builder: (context) => IconButton(
+              icon: const Icon(
+                Icons.menu,
+                color: Colors.black,
+              ),
+              onPressed: () => Scaffold.of(context).openDrawer(),
+            ),
+          ),
           actions: [
             // cart button
             Consumer(
               builder: (context, ref, child) {
                 final viewCartAsync = ref.watch(viewCartProvider);
                 return viewCartAsync.easyWhen(data: (viewCartModel) {
-                  return Badge(
-                    label: Text(cartItemsCount.toString()),
-                    backgroundColor: AppColors.kErrorColor,
-                    child: IconButton(
-                      onPressed: () {
-                        context.navigateTo(
-                          CartRoute(
-                            cartItems: viewCartModel.cartData,
-                          ),
-                        );
-                      },
-                      icon: const Icon(
-                        Icons.shopping_cart,
-                        color: AppColors.kBlackColor,
+                  if (viewCartModel.cartData != null) {
+                    return Badge(
+                      label: Text(viewCartModel.cartData.length.toString()),
+                      backgroundColor: AppColors.kErrorColor,
+                      child: IconButton(
+                        onPressed: () {
+                          context.navigateTo(
+                            CartRoute(
+                              cartItems: viewCartModel.cartData,
+                            ),
+                          );
+                        },
+                        icon: const Icon(
+                          Icons.shopping_cart,
+                          color: AppColors.kBlackColor,
+                        ),
                       ),
-                    ),
-                  );
+                    );
+                  } else {
+                    return Badge(
+                      label: Text("0"),
+                      backgroundColor: AppColors.kErrorColor,
+                      child: IconButton(
+                        onPressed: () {
+                          context.navigateTo(
+                            CartRoute(
+                              cartItems: [],
+                            ),
+                          );
+                        },
+                        icon: const Icon(
+                          Icons.shopping_cart,
+                          color: AppColors.kBlackColor,
+                        ),
+                      ),
+                    );
+                  }
                 });
               },
             ),
-            //a popup menu button that shows options
-            Consumer(
-              builder: (context, ref, child) {
-                final aboutUsAsync = ref.watch(aboutUsProvider);
-                return aboutUsAsync.easyWhen(data: (aboutUsModel) {
-                  return PopupMenuButton(
-                    icon: const Icon(
-                      Icons.more_vert,
-                      color: AppColors.kBlackColor,
-                    ),
-                    itemBuilder: (context) => [
-                      PopupMenuItem(
-                        onTap: () {
-                          context.navigateTo(
-                            TermsAndConditionRoute(contentBody: aboutUsModel.contentData.content),
-                          );
-                        },
-                        child: const Text('About Us'),
-                      ),
-                      PopupMenuItem(
-                        onTap: () {
-                          context.navigateTo(
-                            ContactDetailsRoute(),
-                          );
-                        },
-                        child: const Text('Contact Us'),
-                      ),
-                    ],
-                  );
-                });
-              },
-            ),
+
+            const SizedBox(width: 10),
           ],
           title: Column(
             mainAxisSize: MainAxisSize.min,
@@ -106,7 +158,7 @@ class _HomeViewState extends ConsumerState<HomeView> {
             spacing: 5,
             children: [
               Text(
-                "Home",
+                "Sanitas Health",
                 style: TextStyle(
                   fontWeight: FontWeight.w400,
                 ),
@@ -152,54 +204,114 @@ class _HomeViewState extends ConsumerState<HomeView> {
                   ),
                 ).objectCenterLeft(),
                 //routine test
-                Consumer(
-                  builder: (context, ref, child) {
-                    final routineTestAsync = ref.watch(routineTestProvider);
-                    return routineTestAsync.easyWhen(
-                      data: (routineTestModel) {
-                        return SizedBox(
-                          height: 500,
-                          child: ListView.builder(
-                            primary: false,
-                            itemCount: routineTestModel.routineTestData.length,
-                            // physics: const NeverScrollableScrollPhysics(),
-                            shrinkWrap: true,
-                            itemBuilder: (context, index) {
-                              return ListTile(
-                                title: Text(routineTestModel.routineTestData[index].testName),
-                                subtitle: Column(
-                                  spacing: 2,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text('₹${routineTestModel.routineTestData[index].price}'),
-                                    Text(
-                                      '₹${routineTestModel.routineTestData[index].originalPrice}',
-                                      style: TextStyle(
-                                        color: AppColors.kGrey400,
-                                        decoration: TextDecoration.lineThrough,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                leading: Text(
-                                  '${routineTestModel.routineTestData[index].testId}.',
-                                ),
-                                trailing: IconButton(
-                                  onPressed: () async {
-                                    talker.debug("Response : hello added item");
-                                    final response = await ref.read(addToCartProvider([1, int.tryParse(routineTestModel.routineTestData[index].price) ?? 0]).future);
-                                    talker.debug("Response : $response");
-                                  },
-                                  icon: Icon(Icons.add_shopping_cart_sharp),
-                                ),
-                              );
-                            },
-                          ),
-                        );
-                      },
-                    );
-                  },
-                ),
+
+                ExpandableRoutineTestGrid(),
+
+                // Consumer(
+                //   builder: (context, ref, child) {
+                //     final routineTestAsync = ref.watch(routineTestProvider);
+                //     return routineTestAsync.easyWhen(
+                //       data: (routineTestModel) {
+                //         return SizedBox(
+                //             height: 500,
+                //             child: GridView.builder(
+                //               gridDelegate:
+                //                   const SliverGridDelegateWithFixedCrossAxisCount(
+                //                 crossAxisCount: 2, // Number of items per row
+                //                 childAspectRatio:
+                //                     1 / 1, // Adjust as needed for your design
+                //                 crossAxisSpacing: 8,
+                //                 mainAxisSpacing: 8,
+                //               ),
+                //               itemCount:
+                //                   routineTestModel.routineTestData.length,
+                //               itemBuilder: (context, index) {
+                //                 final data =
+                //                     routineTestModel.routineTestData[index];
+                //                 return Card(
+                //                   elevation: 3,
+                //                   margin: const EdgeInsets.all(8),
+                //                   child: Padding(
+                //                     padding: const EdgeInsets.all(12.0),
+                //                     child: Column(
+                //                       crossAxisAlignment:
+                //                           CrossAxisAlignment.start,
+                //                       children: [
+                //                         // Leading testId
+                //                         Text(
+                //                           '${data.testId}.',
+                //                           style: const TextStyle(
+                //                             fontWeight: FontWeight.bold,
+                //                           ),
+                //                         ),
+                //                         const SizedBox(height: 4),
+                //                         // Test Name
+                //                         Text(
+                //                           data.testName,
+                //                           style: const TextStyle(
+                //                             fontSize: 16,
+                //                           ),
+                //                           maxLines: 1,
+                //                           overflow: TextOverflow.ellipsis,
+                //                         ),
+                //                         const SizedBox(height: 8),
+                //                         // Price details
+                //                         Text(
+                //                           '₹${data.price}',
+                //                           style: const TextStyle(fontSize: 14),
+                //                         ),
+
+                //                         Row(
+                //                           children: [
+                //                             Text(
+                //                               '₹${data.originalPrice}',
+                //                               style: TextStyle(
+                //                                 fontSize: 12,
+                //                                 color: AppColors.kGrey400,
+                //                                 decoration:
+                //                                     TextDecoration.lineThrough,
+                //                               ),
+                //                             ),
+                //                             const Spacer(),
+                //                             Align(
+                //                               alignment: Alignment.bottomRight,
+                //                               child: IconButton(
+                //                                 onPressed: () async {
+                //                                   talker.debug(
+                //                                       "Response : hello added item");
+                //                                   final response = ref
+                //                                       .read(cartNotifierProvider
+                //                                           .notifier)
+                //                                       .addToCart([
+                //                                     1,
+                //                                     int.tryParse(data.price) ??
+                //                                         0
+                //                                   ]);
+                //                                   talker.debug(
+                //                                       "Response : $response");
+                //                                 },
+                //                                 icon: const Icon(Icons
+                //                                     .add_shopping_cart_sharp),
+                //                               ),
+                //                             ),
+                //                           ],
+                //                         ),
+
+                //                         // Spacer pushes the button to the bottom-right
+
+                //                         // Trailing add-to-cart button aligned to the bottom-right
+                //                       ],
+                //                     ),
+                //                   ),
+                //                 );
+                //               },
+                //             ));
+                //       },
+                //     );
+                //   },
+                // ),
+
+
                 Text(
                   'Pathology Test',
                   style: TextStyle(
@@ -213,84 +325,160 @@ class _HomeViewState extends ConsumerState<HomeView> {
                     final pathologyTestAsync = ref.watch(pathologyTestProvider);
                     return pathologyTestAsync.easyWhen(
                       data: (pathologyTestModel) {
-                        return SizedBox(
-                          height: 500,
-                          child: ListView.builder(
-                            primary: false,
-                            itemCount: pathologyTestModel.pathologyTestData.length,
-                            // physics: const NeverScrollableScrollPhysics(),
-                            shrinkWrap: true,
-                            itemBuilder: (context, index) {
-                              return ListTile(
-                                title: Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  spacing: 2,
-                                  children: [
-                                    Text(
-                                        '${pathologyTestModel.pathologyTestData[index].packageId}. '),
-                                    Flexible(
-                                      child: Text(
-                                        pathologyTestModel.pathologyTestData[index].testName,
-                                        overflow: TextOverflow.visible,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                subtitle: Column(
-                                  spacing: 2,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text('₹${pathologyTestModel.pathologyTestData[index].price}'),
-                                    Text(
-                                      '₹${pathologyTestModel.pathologyTestData[index].originalPrice}',
-                                      style: TextStyle(
-                                        color: AppColors.kGrey400,
-                                        decoration: TextDecoration.lineThrough,
-                                      ),
-                                    ),
-                                    Wrap(
-                                      spacing: 5,
-                                      runSpacing: 10,
-                                      alignment: WrapAlignment.start,
-                                      children:
-                                          pathologyTestModel.pathologyTestData[index].packages.map(
-                                        (packageDetails) {
-                                          return Container(
-                                            padding: const EdgeInsets.symmetric(
-                                              vertical: 5,
-                                              horizontal: 10,
-                                            ),
-                                            decoration: BoxDecoration(
-                                              border: Border.all(
-                                                color: AppColors.kGrey400,
-                                                width: 1,
+                        return SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start, // important
+                            children: List.generate(
+                              pathologyTestModel.pathologyTestData.length,
+                              (index) {
+                                final testData =
+                                    pathologyTestModel.pathologyTestData[index];
+                                final isExpanded = expandedCardIndex == index;
+
+                                return Container(
+                                  width: 300,
+                                  margin: const EdgeInsets.symmetric(
+                                      horizontal: 8, vertical: 10),
+                                  child: Card(
+                                    elevation: 3,
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(12.0),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          // Image
+                                          CacheNetworkImageWidget(
+                                            imageUrl: testData.testPhoto,
+                                            width: double.infinity,
+                                            height: 150,
+                                            fit: BoxFit.cover,
+                                          ),
+                                          const SizedBox(height: 12),
+
+                                          // Title + Add to cart
+                                          Row(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                            children: [
+                                              Expanded(
+                                                child: Text(
+                                                  testData.testName,
+                                                  style: const TextStyle(
+                                                    fontSize: 16,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                ),
                                               ),
-                                              borderRadius: BorderRadius.circular(10),
+                                              IconButton(
+                                                onPressed: () {
+                                                  print('Item added to cart');
+                                                  talker.debug(
+                                                      "Response : hello added item");
+                                                  final response = ref
+                                                      .read(cartNotifierProvider
+                                                          .notifier)
+                                                      .addToCart([
+                                                    1,
+                                                    int.tryParse(testData.price) ??
+                                                        0
+                                                  ]);
+                                                  talker.debug(
+                                                      "Response : $response");
+
+                                                },
+                                                icon: const Icon(Icons
+                                                    .add_shopping_cart_sharp),
+                                              ),
+                                            ],
+                                          ),
+                                          const SizedBox(height: 8),
+
+                                          // Price
+                                          Text(
+                                            '₹${testData.price}',
+                                            style:
+                                                const TextStyle(fontSize: 14),
+                                          ),
+                                          Text(
+                                            '₹${testData.originalPrice}',
+                                            style: TextStyle(
+                                              fontSize: 12,
+                                              color: Colors.grey,
+                                              decoration:
+                                                  TextDecoration.lineThrough,
                                             ),
-                                            child: Text(packageDetails.testName),
-                                          );
-                                        },
-                                      ).toList(),
+                                          ),
+                                          const SizedBox(height: 8),
+
+                                          // Package details header
+                                          Row(
+                                            children: [
+                                              const Text(
+                                                'Tests',
+                                                style: TextStyle(fontSize: 14),
+                                              ),
+                                              const Spacer(),
+                                              TextButton(
+                                                onPressed: () {
+                                                  setState(() {
+                                                    expandedCardIndex =
+                                                        isExpanded
+                                                            ? null
+                                                            : index;
+                                                  });
+                                                },
+                                                child: Text(isExpanded
+                                                    ? 'View Less'
+                                                    : 'View More'),
+                                              ),
+                                            ],
+                                          ),
+
+                                          // Expandable Section
+                                          AnimatedSize(
+                                            duration: const Duration(
+                                                milliseconds: 300),
+                                            curve: Curves.easeInOut,
+                                            child: isExpanded
+                                                ? Wrap(
+                                                    spacing: 5,
+                                                    runSpacing: 10,
+                                                    children: testData.packages
+                                                        .map((packageDetails) {
+                                                      return Container(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .symmetric(
+                                                                vertical: 5,
+                                                                horizontal: 10),
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          border: Border.all(
+                                                              color:
+                                                                  Colors.grey),
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(10),
+                                                        ),
+                                                        child: Text(
+                                                            packageDetails
+                                                                .testName),
+                                                      );
+                                                    }).toList(),
+                                                  )
+                                                : const SizedBox.shrink(),
+                                          ),
+                                        ],
+                                      ),
                                     ),
-                                  ],
-                                ),
-                                leading: CacheNetworkImageWidget(
-                                  imageUrl:
-                                      '${AppUrls.imgBaseUrlForPathoTest}${pathologyTestModel.pathologyTestData[index].testPhoto}',
-                                  width: 50,
-                                  height: 50,
-                                  fit: BoxFit.cover,
-                                ),
-                                trailing: IconButton(
-                                  onPressed: () async {
-                                    talker.debug("Response : hello added item");
-                                    // final response = await ref.read(addToCartProvider([1, int.tryParse(pathologyTestModel.pathologyTestData[index].price)!]).future);
-                                    // talker.debug("Response : $response");
-                                  },
-                                  icon: Icon(Icons.add_shopping_cart_sharp),
-                                ),
-                              );
-                            },
+                                  ),
+                                );
+                              },
+                            ),
                           ),
                         );
                       },

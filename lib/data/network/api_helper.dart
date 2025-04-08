@@ -112,7 +112,9 @@ class ApiHelper {
     if (result.statusCode == 200 || result.statusCode == 201) {
       final parsedJson = jsonDecode(result.data);
       return Success(AddToCartResponseModel.fromMap(parsedJson));
-    } else {
+    } 
+    
+    else {
       return Error(APIException.fromMap(result.data));
     }
   }
