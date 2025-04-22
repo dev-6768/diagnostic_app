@@ -33,7 +33,7 @@ class _AppState extends ConsumerState<App> with GlobalHelper {
         statusBarColor: Color(0xFF09238D), // status bar color
       ),
       child: MaterialApp.router(
-        debugShowCheckedModeBanner: false,
+        debugShowCheckedModeBanner: true,
         title: 'diagnostic_app App',
         theme: Themes.lightTheme,
         // darkTheme: Themes.darkTheme,

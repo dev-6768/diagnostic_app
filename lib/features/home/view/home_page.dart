@@ -10,6 +10,8 @@ import 'package:diagnostic_app/features/home/controller/pod/pathology_test_pod.d
 import 'package:diagnostic_app/features/home/controller/pod/view_cart_pod.dart';
 import 'package:diagnostic_app/features/home/view/widget/expandable_routine_test_widget.dart';
 import 'package:diagnostic_app/features/home/view/widget/home_page_carousel_widget.dart';
+import 'package:diagnostic_app/features/home_collection/controller/home_collection_test_pod.dart';
+import 'package:diagnostic_app/features/login_page/controller/login_notifier.dart';
 import 'package:diagnostic_app/features/terms_and_conditions/controller/pod/about_us_pod.dart';
 import 'package:diagnostic_app/shared/riverpod_ext/asynvalue_easy_when.dart';
 import 'package:flutter/material.dart';
@@ -90,6 +92,74 @@ class _HomeViewState extends ConsumerState<HomeView> {
                   );
                 },
               ),
+
+              ListTile(
+                leading: const Icon(Icons.login),
+                title: const Text('Login'),
+                onTap: () {
+                  // Navigate to Settings
+                  context.navigateTo(
+                    LoginRoute(),
+                  );
+                },
+              ),
+
+              ListTile(
+                leading: const Icon(Icons.login),
+                title: const Text('Logout'),
+                onTap: () {
+                  ref.read(userDetailsProvider.notifier).clear();
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("User logged out.")));
+                },
+              ),
+
+              ListTile(
+                leading: const Icon(Icons.app_registration_rounded),
+                title: const Text('Signup'),
+                onTap: () {
+                  // Navigate to Settings
+                  context.navigateTo(
+                    SignupRoute(),
+                  );
+                },
+              ),
+
+
+              ListTile(
+                leading: const Icon(Icons.password),
+                title: const Text('Change Password'),
+                onTap: () {
+                  if(ref.read(userDetailsProvider.notifier).isLoggedIn()) {
+                    context.navigateTo(
+                      ChangePasswordRoute(),
+                    );
+                  }
+
+                  else {
+                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("User not logged in.")));
+                  }
+                  
+                },
+              ),
+
+              ListTile(
+                leading: const Icon(Icons.person),
+                title: const Text('Appointments'),
+                onTap: () {
+                  // Navigate to Settings
+                  if(ref.read(userDetailsProvider.notifier).isLoggedIn()) {
+                    context.navigateTo(
+                      AppointmentBookingRoute(),
+                    );
+                  }
+
+                  else {
+                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("User not logged in.")));
+                  }
+                },
+              ),
+
+              
             ],
           ),
         ),
@@ -398,11 +468,40 @@ class _HomeViewState extends ConsumerState<HomeView> {
                                           const SizedBox(height: 8),
 
                                           // Price
-                                          Text(
-                                            '₹${testData.price}',
-                                            style:
-                                                const TextStyle(fontSize: 14),
+                                          Row(
+                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Text(
+                                                '₹${testData.price}',
+                                                style:
+                                                    const TextStyle(fontSize: 14),
+                                              ),
+
+                                              TextButton(
+                                                onPressed: () {
+                                                  if(ref.read(userDetailsProvider.notifier).isLoggedIn()) {
+                                                    ref.read(homeCollectionTestBookingProvider(
+                                                      HomeCollectionBookingTestData(
+                                                        name: ref.read(userDetailsProvider.notifier).getLoginDetails().loginData![0].fname ?? "Unknown", 
+                                                        email: ref.read(userDetailsProvider.notifier).getLoginDetails().loginData![0].email ?? "Unknown", 
+                                                        phone: ref.read(userDetailsProvider.notifier).getLoginDetails().loginData![0].phone ?? "Unknown", 
+                                                        testName: testData.testName,
+                                                      )
+                                                    ));
+
+                                                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Test booked.")));
+                                                  }
+
+                                                  else {
+                                                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("In order to book a test, you need to login first.")));
+                                                  }
+                                                  
+                                                },
+                                                child: Text("Book")
+                                              ),
+                                            ],
                                           ),
+                                          
                                           Text(
                                             '₹${testData.originalPrice}',
                                             style: TextStyle(

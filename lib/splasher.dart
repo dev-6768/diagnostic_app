@@ -9,7 +9,7 @@ class Splasher extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      debugShowCheckedModeBanner: false,
+      debugShowCheckedModeBanner: true,
       theme: ThemeData(primaryColor: Colors.blue),
       home: SplashView(
         removeSpalshLoader: false,

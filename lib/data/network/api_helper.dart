@@ -2,11 +2,19 @@ import 'dart:convert';
 
 import 'package:diagnostic_app/const/app_urls.dart';
 import 'package:diagnostic_app/data/model/about_us_model.dart';
+import 'package:diagnostic_app/data/model/appointment_booking_model.dart';
 import 'package:diagnostic_app/data/model/carousel_model.dart';
+import 'package:diagnostic_app/data/model/change_password_model.dart';
+import 'package:diagnostic_app/data/model/checkout_model.dart';
 import 'package:diagnostic_app/data/model/contact_details_model.dart';
 import 'package:diagnostic_app/data/model/delete_cart_response_model.dart';
+import 'package:diagnostic_app/data/model/forgot_password_model.dart';
+import 'package:diagnostic_app/data/model/home_collection_booking_model.dart';
+import 'package:diagnostic_app/data/model/home_collection_test_model.dart';
+import 'package:diagnostic_app/data/model/login_page_model.dart';
 import 'package:diagnostic_app/data/model/pathology_test_model.dart';
 import 'package:diagnostic_app/data/model/routine_test_model.dart';
+import 'package:diagnostic_app/data/model/signup_page_model.dart';
 import 'package:diagnostic_app/data/model/update_cart_response_model.dart';
 import 'package:diagnostic_app/data/model/add_to_cart_model.dart';
 import 'package:diagnostic_app/data/model/view_cart_model.dart';
@@ -112,6 +120,119 @@ class ApiHelper {
     if (result.statusCode == 200 || result.statusCode == 201) {
       final parsedJson = jsonDecode(result.data);
       return Success(AddToCartResponseModel.fromMap(parsedJson));
+    } 
+    
+    else {
+      return Error(APIException.fromMap(result.data));
+    }
+  }
+
+
+  Future<Result<LoginPageModel, APIException>> loginUser({required String userName, required String password, required String uniqueId}) async {
+    final result = await dio.get("https://sanitascare.health/webservice/service.php?action=login&user_name=$userName&password=$password&unique_id=$uniqueId");
+    if (result.statusCode == 200 || result.statusCode == 201) {
+      final parsedJson = jsonDecode(result.data);
+      return Success(LoginPageModel.fromMap(parsedJson));
+    } 
+    
+    else {
+      return Error(APIException.fromMap(result.data));
+    }
+  }
+
+
+  Future<Result<SignupPageModel, APIException>> signupUser({
+      required String fName,
+      required String lName,
+      required String email,
+      required String phone,
+      required String password,
+      required String confirmPassword,
+      required String address,
+      required String city,
+      required String state,
+      required String zip,
+      required String uniqueId,
+    }) async {
+    final result = await dio.get(
+      "https://sanitascare.health/webservice/service.php?action=registration&fname=$fName&lname=$lName&email=$email&phone=$phone&password=$password&confirm_password=$confirmPassword&address=$address&city=$city&state=$state&zip=$zip&unique_id=$uniqueId"
+    );
+    if (result.statusCode == 200 || result.statusCode == 201) {
+      final parsedJson = jsonDecode(result.data);
+      return Success(SignupPageModel.fromMap(parsedJson));
+    } 
+    
+    else {
+      return Error(APIException.fromMap(result.data));
+    }
+  }
+
+
+  Future<Result<ForgotPasswordModel, APIException>> forgotPassword({required String email}) async {
+    final result = await dio.get("https://sanitascare.health/webservice/service.php?action=forgot_password&email=$email");
+    if (result.statusCode == 200 || result.statusCode == 201) {
+      final parsedJson = jsonDecode(result.data);
+      return Success(ForgotPasswordModel.fromMap(parsedJson));
+    } 
+    
+    else {
+      return Error(APIException.fromMap(result.data));
+    }
+  }
+
+  Future<Result<ChangePasswordModel, APIException>> changePassword({required String currentPassword, required String newPassword, required String confirmPassword, required String userId}) async {
+    final result = await dio.get("https://sanitascare.health/webservice/service.php?action=change_password&old_password=$currentPassword&new_password=$newPassword&confirm_password=$confirmPassword&user_id=$userId");
+    if (result.statusCode == 200 || result.statusCode == 201) {
+      final parsedJson = jsonDecode(result.data);
+      return Success(ChangePasswordModel.fromMap(parsedJson));
+    } 
+    
+    else {
+      return Error(APIException.fromMap(result.data));
+    }
+  }
+
+  Future<Result<CheckoutModel, APIException>> checkoutAction({required String fName, required String lName, required String email, required String phone, required String address, required String city, required String state}) async {
+    final result = await dio.get("https://sanitascare.health/webservice/service.php?action=checkout&fname=$fName&lname=$lName&email=$email&phone=$phone&address=$address&city=$city&state=$state");
+    if (result.statusCode == 200 || result.statusCode == 201) {
+      final parsedJson = jsonDecode(result.data);
+      return Success(CheckoutModel.fromMap(parsedJson));
+    } 
+    
+    else {
+      return Error(APIException.fromMap(result.data));
+    }
+  }
+
+  Future<Result<AppointmentBookingModel, APIException>> appointmentBooking({required String name, required String email, required String phone, required String doctorName, required String date}) async {
+    final result = await dio.get("https://sanitascare.health/webservice/service.php?action=appointment_booking&name=$name&email=$email&phone=$phone&doctor_name=$doctorName&appointment_date=$date");
+    if (result.statusCode == 200 || result.statusCode == 201) {
+      final parsedJson = jsonDecode(result.data);
+      return Success(AppointmentBookingModel.fromMap(parsedJson));
+    } 
+    
+    else {
+      return Error(APIException.fromMap(result.data));
+    }
+  }
+
+  Future<Result<HomeCollectionBookingTestModel, APIException>> homeCollectionTestBooking({required String name, required String email, required String phone, required String testName}) async {
+    final result = await dio.get("https://sanitascare.health/webservice/service.php?action=home_collection&name=$name&email=$email&phone=$phone&test_name=$testName");
+    if (result.statusCode == 200 || result.statusCode == 201) {
+      final parsedJson = jsonDecode(result.data);
+      return Success(HomeCollectionBookingTestModel.fromMap(parsedJson));
+    } 
+    
+    else {
+      return Error(APIException.fromMap(result.data));
+    }
+  }
+
+  Future<Result<HomeCollectionBookingModel, APIException>> homeCollectionBooking({required String name, required String email, required String phone}) async {
+    final result = await dio.get("https://sanitascare.health/webservice/service.php?action=home_collection&name=$name&email=$email&phone=$phone");
+    if (result.statusCode == 200 || result.statusCode == 201) {
+      final parsedJson = jsonDecode(result.data);
+      return Success(HomeCollectionBookingModel.fromMap(parsedJson));
     } 
     
     else {

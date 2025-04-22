@@ -35,5 +35,29 @@ class AppRouter extends RootStackRouter {
       page: CartRoute.page,
       path: '/cart',
     ),
+    AutoRoute(
+      page: LoginRoute.page,
+      path: '/login',
+    ),
+    AutoRoute(
+      page: SignupRoute.page,
+      path: '/signup',
+    ),
+    AutoRoute(
+      page: ChangePasswordRoute.page,
+      path: '/change-password',
+    ),
+    AutoRoute(
+      page: ForgotPasswordRoute.page,
+      path: '/forgot-password',
+    ),
+    AutoRoute(
+      page: CheckoutRoute.page,
+      path: '/checkout',
+    ),
+    AutoRoute(
+      page: AppointmentBookingRoute.page,
+      path: '/appointment-booking',
+    ),
   ];
 }

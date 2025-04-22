@@ -1,3 +1,5 @@
+import 'package:auto_route/auto_route.dart';
+import 'package:diagnostic_app/core/router/router.gr.dart';
 import 'package:flutter/material.dart';
 
 class CartBottomBar extends StatelessWidget {
@@ -52,7 +54,7 @@ class CartBottomBar extends StatelessWidget {
             Expanded(
               child: ElevatedButton(
                 onPressed: () {
-                  // Checkout functionality would go here
+                  context.navigateTo(CheckoutRoute());
                 },
                 style: ElevatedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 12),

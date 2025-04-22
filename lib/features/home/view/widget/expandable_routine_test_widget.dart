@@ -2,6 +2,8 @@ import 'package:diagnostic_app/bootstrap.dart';
 import 'package:diagnostic_app/const/styles/app_colors.dart';
 import 'package:diagnostic_app/features/cart/controller/pod/cart_notifier_pod.dart';
 import 'package:diagnostic_app/features/home/controller/pod/routine_test_pod.dart';
+import 'package:diagnostic_app/features/home_collection/controller/home_collection_test_pod.dart';
+import 'package:diagnostic_app/features/login_page/controller/login_notifier.dart';
 import 'package:diagnostic_app/shared/riverpod_ext/asynvalue_easy_when.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -45,7 +47,7 @@ class _ExpandableRoutineTestGridState extends State<ExpandableRoutineTestGrid> w
                       physics: const NeverScrollableScrollPhysics(),
                       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 2,
-                        childAspectRatio: 1 / 1,
+                        childAspectRatio: 0.9,  
                         crossAxisSpacing: 8,
                         mainAxisSpacing: 8,
                       ),
@@ -72,10 +74,38 @@ class _ExpandableRoutineTestGridState extends State<ExpandableRoutineTestGrid> w
                                   overflow: TextOverflow.ellipsis,
                                 ),
                                 const SizedBox(height: 8),
-                                Text(
-                                  '₹${data.price}',
-                                  style: const TextStyle(fontSize: 14),
-                                ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                  Text(
+                                    '₹${data.price}',
+                                    style: const TextStyle(fontSize: 14),
+                                  ),
+
+
+                                  TextButton(
+                                    onPressed: () {
+                                      if(ref.read(userDetailsProvider.notifier).isLoggedIn()) {
+                                        ref.read(homeCollectionTestBookingProvider(
+                                          HomeCollectionBookingTestData(
+                                            name: ref.read(userDetailsProvider.notifier).getLoginDetails().loginData![0].fname ?? "Unknown", 
+                                            email: ref.read(userDetailsProvider.notifier).getLoginDetails().loginData![0].email ?? "Unknown", 
+                                            phone: ref.read(userDetailsProvider.notifier).getLoginDetails().loginData![0].phone ?? "Unknown", 
+                                            testName: data.testName,
+                                          )
+                                        ));
+
+                                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Test booked.")));
+                                      }
+
+                                      else {
+                                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("In order to book a test, you need to login first.")));
+                                      }
+                                    },
+
+                                    child: Text("Book"),
+                                  ),
+                                ],),
                                 Row(
                                   children: [
                                     Text(
