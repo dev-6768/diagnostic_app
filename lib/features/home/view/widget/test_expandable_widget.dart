@@ -1,3 +1,4 @@
+import 'package:diagnostic_app/const/styles/app_colors.dart';
 import 'package:flutter/material.dart';
 
 class ExpandableSection extends StatefulWidget {
@@ -23,13 +24,15 @@ class _ExpandableSectionState extends State<ExpandableSection> {
               isExpanded = !isExpanded;
             });
           },
-          child: Text(isExpanded ? 'View Less' : 'View More'),
+          child: Text(
+            isExpanded ? 'View Less' : 'View More',
+            style: TextStyle(color: AppColors.kRed500),
+          ),
         ),
         AnimatedCrossFade(
           firstChild: const SizedBox.shrink(),
           secondChild: widget.child,
-          crossFadeState:
-              isExpanded ? CrossFadeState.showSecond : CrossFadeState.showFirst,
+          crossFadeState: isExpanded ? CrossFadeState.showSecond : CrossFadeState.showFirst,
           duration: const Duration(milliseconds: 300),
         ),
       ],

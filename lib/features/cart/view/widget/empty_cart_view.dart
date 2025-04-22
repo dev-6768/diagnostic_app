@@ -1,5 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:diagnostic_app/const/resource.dart';
+import 'package:diagnostic_app/const/styles/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -40,7 +41,7 @@ class EmptyCartView extends StatelessWidget {
               context.maybePop();
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF1E88E5),
+              backgroundColor: AppColors.kDeepGreen,
               padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 12),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(25),
@@ -51,6 +52,7 @@ class EmptyCartView extends StatelessWidget {
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
+                color: AppColors.kWhiteColor,
               ),
             ),
           ),

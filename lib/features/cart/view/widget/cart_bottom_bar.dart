@@ -1,3 +1,4 @@
+import 'package:diagnostic_app/const/styles/app_colors.dart';
 import 'package:flutter/material.dart';
 
 class CartBottomBar extends StatelessWidget {
@@ -55,6 +56,7 @@ class CartBottomBar extends StatelessWidget {
                   // Checkout functionality would go here
                 },
                 style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.kDeepGreen,
                   padding: const EdgeInsets.symmetric(vertical: 12),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(25),
@@ -65,6 +67,7 @@ class CartBottomBar extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
+                    color: AppColors.kWhiteColor,
                   ),
                 ),
               ),

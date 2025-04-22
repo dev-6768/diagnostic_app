@@ -13,7 +13,8 @@ class ExpandableRoutineTestGrid extends StatefulWidget {
   State<ExpandableRoutineTestGrid> createState() => _ExpandableRoutineTestGridState();
 }
 
-class _ExpandableRoutineTestGridState extends State<ExpandableRoutineTestGrid> with TickerProviderStateMixin {
+class _ExpandableRoutineTestGridState extends State<ExpandableRoutineTestGrid>
+    with TickerProviderStateMixin {
   bool _isExpanded = false;
 
   @override
@@ -55,26 +56,30 @@ class _ExpandableRoutineTestGridState extends State<ExpandableRoutineTestGrid> w
                         return Card(
                           elevation: 3,
                           margin: const EdgeInsets.all(8),
-                          child: Padding(
+                          child: Container(
+                            color: AppColors.kDeepGreen,
                             padding: const EdgeInsets.all(12.0),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
                                   '${data.testId}.',
-                                  style: const TextStyle(fontWeight: FontWeight.bold),
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.bold, color: AppColors.kWhiteColor),
                                 ),
                                 const SizedBox(height: 4),
                                 Text(
                                   data.testName,
-                                  style: const TextStyle(fontSize: 16),
+                                  style:
+                                      const TextStyle(fontSize: 16, color: AppColors.kWhiteColor),
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                 ),
                                 const SizedBox(height: 8),
                                 Text(
                                   '₹${data.price}',
-                                  style: const TextStyle(fontSize: 14),
+                                  style:
+                                      const TextStyle(fontSize: 14, color: AppColors.kWhiteColor),
                                 ),
                                 Row(
                                   children: [
@@ -94,13 +99,13 @@ class _ExpandableRoutineTestGridState extends State<ExpandableRoutineTestGrid> w
                                           talker.debug("Response : hello added item");
                                           final response = ref
                                               .read(cartNotifierProvider.notifier)
-                                              .addToCart([
-                                            1,
-                                            int.tryParse(data.price) ?? 0
-                                          ]);
+                                              .addToCart([1, int.tryParse(data.price) ?? 0]);
                                           talker.debug("Response : $response");
                                         },
-                                        icon: const Icon(Icons.add_shopping_cart_sharp),
+                                        icon: const Icon(
+                                          Icons.add_shopping_cart_sharp,
+                                          color: AppColors.kWhiteColor,
+                                        ),
                                       ),
                                     ),
                                   ],
@@ -120,7 +125,10 @@ class _ExpandableRoutineTestGridState extends State<ExpandableRoutineTestGrid> w
                         _isExpanded = !_isExpanded;
                       });
                     },
-                    child: Text(_isExpanded ? 'View Less' : 'View More'),
+                    child: Text(
+                      _isExpanded ? 'View Less' : 'View More',
+                      style: TextStyle(color: AppColors.kRed500),
+                    ),
                   ),
               ],
             );
