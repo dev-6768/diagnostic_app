@@ -61,14 +61,17 @@ class LoginNotifier extends StateNotifier<LoginState> {
     await Future.delayed(const Duration(seconds: 2)); // simulate API call
 
     // dummy validation
-    if (response.loginData != null) {
+    if (response.loginData != null && response.loginData!.isNotEmpty) {
+      talker.debug("User logged in successfully.");
+      talker.debug(response.loginData.toString());
       ref.read(userDetailsProvider.notifier).set(response);
       state = state.copyWith(
         status: LoginStatus.success
       );
-    } 
+    }
     
     else {
+      talker.debug("User login failed.");
       state = state.copyWith(
         status: LoginStatus.error,
         error: 'Invalid credentials',

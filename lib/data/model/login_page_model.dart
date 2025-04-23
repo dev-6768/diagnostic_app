@@ -112,4 +112,9 @@ class LoginDatum {
         "state": state,
         "zip": zip,
     };
+
+    @override
+    String toString() {
+      return 'LoginDatum(userId : $userId, fname : $fname, lname : $lname, email : $email, phone : $phone, address : $address, city : $city, state : $state, zip : $zip)';
+    }
 }
