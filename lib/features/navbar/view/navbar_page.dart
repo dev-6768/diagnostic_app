@@ -1,5 +1,4 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:diagnostic_app/const/app_icons/app_icons.dart';
 import 'package:diagnostic_app/const/styles/app_colors.dart';
 import 'package:diagnostic_app/features/home/view/home_page.dart';
 import 'package:diagnostic_app/features/navbar/controller/pod/navbar_selected_index_pod.dart';
@@ -35,7 +34,7 @@ class _NavbarViewState extends ConsumerState<NavbarView> {
   Widget build(BuildContext context) {
     return Consumer(
       builder: (context, ref, child) {
-            final navbarSelectedIndexState = ref.watch(navbarSelectedIndexProvider);
+        final navbarSelectedIndexState = ref.watch(navbarSelectedIndexProvider);
         return Scaffold(
           body: PageView.builder(
             pageSnapping: false,
@@ -59,7 +58,7 @@ class _NavbarViewState extends ConsumerState<NavbarView> {
                 ),
                 selectedIcon: HugeIcon(
                   icon: Icons.home_outlined,
-                  color: Theme.of(context).primaryColor,
+                  color: AppColors.kWhiteColor,
                   size: 25.0,
                 ),
                 label: 'Home',
@@ -73,12 +72,11 @@ class _NavbarViewState extends ConsumerState<NavbarView> {
                 ),
                 selectedIcon: HugeIcon(
                   icon: Icons.medical_services_outlined,
-                  color: Theme.of(context).primaryColor,
+                  color: AppColors.kWhiteColor,
                   size: 25.0,
                 ),
                 label: 'Pathology test',
               ),
-              
             ],
           ),
         );

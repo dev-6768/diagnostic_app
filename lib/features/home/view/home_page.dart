@@ -1,6 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:diagnostic_app/bootstrap.dart';
+import 'package:diagnostic_app/const/app_urls.dart';
 import 'package:diagnostic_app/const/styles/app_colors.dart';
 import 'package:diagnostic_app/core/router/router.gr.dart';
 import 'package:diagnostic_app/features/cart/controller/pod/cart_notifier_pod.dart';
@@ -53,10 +54,10 @@ class _HomeViewState extends ConsumerState<HomeView> {
         drawer: Drawer(
           child: ListView(
             padding: EdgeInsets.zero,
-            children: <Widget>[
-              const DrawerHeader(
+            children: [
+              DrawerHeader(
                 decoration: BoxDecoration(
-                  color: Colors.blue,
+                  color: AppColors.kDeepGreen,
                 ),
                 child: Text(
                   'Sanitas Health',
@@ -75,8 +76,7 @@ class _HomeViewState extends ConsumerState<HomeView> {
                     onTap: () {
                       // Navigate to About
                       context.navigateTo(
-                        TermsAndConditionRoute(
-                            contentBody: aboutUsModel.contentData.content),
+                        TermsAndConditionRoute(contentBody: aboutUsModel.contentData.content),
                       );
                     },
                   );
@@ -179,43 +179,23 @@ class _HomeViewState extends ConsumerState<HomeView> {
               builder: (context, ref, child) {
                 final viewCartAsync = ref.watch(viewCartProvider);
                 return viewCartAsync.easyWhen(data: (viewCartModel) {
-                  if (viewCartModel.cartData != null) {
-                    return Badge(
-                      label: Text(viewCartModel.cartData.length.toString()),
-                      backgroundColor: AppColors.kErrorColor,
-                      child: IconButton(
-                        onPressed: () {
-                          context.navigateTo(
-                            CartRoute(
-                              cartItems: viewCartModel.cartData,
-                            ),
-                          );
-                        },
-                        icon: const Icon(
-                          Icons.shopping_cart,
-                          color: AppColors.kBlackColor,
-                        ),
+                  return Badge(
+                    label: Text(viewCartModel.cartData.length.toString()),
+                    backgroundColor: AppColors.kErrorColor,
+                    child: IconButton(
+                      onPressed: () {
+                        context.navigateTo(
+                          CartRoute(
+                            cartItems: viewCartModel.cartData,
+                          ),
+                        );
+                      },
+                      icon: const Icon(
+                        Icons.shopping_cart,
+                        color: AppColors.kBlackColor,
                       ),
-                    );
-                  } else {
-                    return Badge(
-                      label: Text("0"),
-                      backgroundColor: AppColors.kErrorColor,
-                      child: IconButton(
-                        onPressed: () {
-                          context.navigateTo(
-                            CartRoute(
-                              cartItems: [],
-                            ),
-                          );
-                        },
-                        icon: const Icon(
-                          Icons.shopping_cart,
-                          color: AppColors.kBlackColor,
-                        ),
-                      ),
-                    );
-                  }
+                    ),
+                  );
                 });
               },
             ),
@@ -274,114 +254,7 @@ class _HomeViewState extends ConsumerState<HomeView> {
                   ),
                 ).objectCenterLeft(),
                 //routine test
-
                 ExpandableRoutineTestGrid(),
-
-                // Consumer(
-                //   builder: (context, ref, child) {
-                //     final routineTestAsync = ref.watch(routineTestProvider);
-                //     return routineTestAsync.easyWhen(
-                //       data: (routineTestModel) {
-                //         return SizedBox(
-                //             height: 500,
-                //             child: GridView.builder(
-                //               gridDelegate:
-                //                   const SliverGridDelegateWithFixedCrossAxisCount(
-                //                 crossAxisCount: 2, // Number of items per row
-                //                 childAspectRatio:
-                //                     1 / 1, // Adjust as needed for your design
-                //                 crossAxisSpacing: 8,
-                //                 mainAxisSpacing: 8,
-                //               ),
-                //               itemCount:
-                //                   routineTestModel.routineTestData.length,
-                //               itemBuilder: (context, index) {
-                //                 final data =
-                //                     routineTestModel.routineTestData[index];
-                //                 return Card(
-                //                   elevation: 3,
-                //                   margin: const EdgeInsets.all(8),
-                //                   child: Padding(
-                //                     padding: const EdgeInsets.all(12.0),
-                //                     child: Column(
-                //                       crossAxisAlignment:
-                //                           CrossAxisAlignment.start,
-                //                       children: [
-                //                         // Leading testId
-                //                         Text(
-                //                           '${data.testId}.',
-                //                           style: const TextStyle(
-                //                             fontWeight: FontWeight.bold,
-                //                           ),
-                //                         ),
-                //                         const SizedBox(height: 4),
-                //                         // Test Name
-                //                         Text(
-                //                           data.testName,
-                //                           style: const TextStyle(
-                //                             fontSize: 16,
-                //                           ),
-                //                           maxLines: 1,
-                //                           overflow: TextOverflow.ellipsis,
-                //                         ),
-                //                         const SizedBox(height: 8),
-                //                         // Price details
-                //                         Text(
-                //                           '₹${data.price}',
-                //                           style: const TextStyle(fontSize: 14),
-                //                         ),
-
-                //                         Row(
-                //                           children: [
-                //                             Text(
-                //                               '₹${data.originalPrice}',
-                //                               style: TextStyle(
-                //                                 fontSize: 12,
-                //                                 color: AppColors.kGrey400,
-                //                                 decoration:
-                //                                     TextDecoration.lineThrough,
-                //                               ),
-                //                             ),
-                //                             const Spacer(),
-                //                             Align(
-                //                               alignment: Alignment.bottomRight,
-                //                               child: IconButton(
-                //                                 onPressed: () async {
-                //                                   talker.debug(
-                //                                       "Response : hello added item");
-                //                                   final response = ref
-                //                                       .read(cartNotifierProvider
-                //                                           .notifier)
-                //                                       .addToCart([
-                //                                     1,
-                //                                     int.tryParse(data.price) ??
-                //                                         0
-                //                                   ]);
-                //                                   talker.debug(
-                //                                       "Response : $response");
-                //                                 },
-                //                                 icon: const Icon(Icons
-                //                                     .add_shopping_cart_sharp),
-                //                               ),
-                //                             ),
-                //                           ],
-                //                         ),
-
-                //                         // Spacer pushes the button to the bottom-right
-
-                //                         // Trailing add-to-cart button aligned to the bottom-right
-                //                       ],
-                //                     ),
-                //                   ),
-                //                 );
-                //               },
-                //             ));
-                //       },
-                //     );
-                //   },
-                // ),
-
-
                 Text(
                   'Pathology Test',
                   style: TextStyle(
@@ -402,25 +275,25 @@ class _HomeViewState extends ConsumerState<HomeView> {
                             children: List.generate(
                               pathologyTestModel.pathologyTestData.length,
                               (index) {
-                                final testData =
-                                    pathologyTestModel.pathologyTestData[index];
+                                final testData = pathologyTestModel.pathologyTestData[index];
                                 final isExpanded = expandedCardIndex == index;
 
-                                return Container(
-                                  width: 300,
-                                  margin: const EdgeInsets.symmetric(
-                                      horizontal: 8, vertical: 10),
-                                  child: Card(
-                                    elevation: 3,
+                                return Card(
+                                  surfaceTintColor: AppColors.kDeepGreen,
+                                  color: AppColors.kDeepGreen,
+                                  elevation: 3,
+                                  child: Container(
+                                    width: 300,
+                                    margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
                                     child: Padding(
                                       padding: const EdgeInsets.all(12.0),
                                       child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
+                                        crossAxisAlignment: CrossAxisAlignment.start,
                                         children: [
                                           // Image
                                           CachedNetworkImage(
-                                            imageUrl: testData.testPhoto,
+                                            imageUrl:
+                                                "${AppUrls.imgBaseUrlForPathoTest}${testData.testPhoto}",
                                             width: double.infinity,
                                             height: 150,
                                             fit: BoxFit.cover,
@@ -429,39 +302,32 @@ class _HomeViewState extends ConsumerState<HomeView> {
 
                                           // Title + Add to cart
                                           Row(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.center,
+                                            crossAxisAlignment: CrossAxisAlignment.center,
                                             children: [
                                               Expanded(
                                                 child: Text(
                                                   testData.testName,
                                                   style: const TextStyle(
-                                                    fontSize: 16,
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
+                                                      fontSize: 16,
+                                                      fontWeight: FontWeight.bold,
+                                                      color: AppColors.kWhiteColor),
+                                                  overflow: TextOverflow.ellipsis,
                                                 ),
                                               ),
                                               IconButton(
                                                 onPressed: () {
                                                   print('Item added to cart');
-                                                  talker.debug(
-                                                      "Response : hello added item");
+                                                  talker.debug("Response : hello added item");
                                                   final response = ref
-                                                      .read(cartNotifierProvider
-                                                          .notifier)
-                                                      .addToCart([
-                                                    1,
-                                                    int.tryParse(testData.price) ??
-                                                        0
-                                                  ]);
-                                                  talker.debug(
-                                                      "Response : $response");
-
+                                                      .read(cartNotifierProvider.notifier)
+                                                      .addToCart(
+                                                          [1, int.tryParse(testData.price) ?? 0]);
+                                                  talker.debug("Response : $response");
                                                 },
-                                                icon: const Icon(Icons
-                                                    .add_shopping_cart_sharp),
+                                                icon: const Icon(
+                                                  Icons.add_shopping_cart_sharp,
+                                                  color: AppColors.kWhiteColor,
+                                                ),
                                               ),
                                             ],
                                           ),
@@ -507,8 +373,7 @@ class _HomeViewState extends ConsumerState<HomeView> {
                                             style: TextStyle(
                                               fontSize: 12,
                                               color: Colors.grey,
-                                              decoration:
-                                                  TextDecoration.lineThrough,
+                                              decoration: TextDecoration.lineThrough,
                                             ),
                                           ),
                                           const SizedBox(height: 8),
@@ -518,54 +383,48 @@ class _HomeViewState extends ConsumerState<HomeView> {
                                             children: [
                                               const Text(
                                                 'Tests',
-                                                style: TextStyle(fontSize: 14),
+                                                style: TextStyle(
+                                                    fontSize: 14, color: AppColors.kWhiteColor),
                                               ),
                                               const Spacer(),
                                               TextButton(
                                                 onPressed: () {
                                                   setState(() {
-                                                    expandedCardIndex =
-                                                        isExpanded
-                                                            ? null
-                                                            : index;
+                                                    expandedCardIndex = isExpanded ? null : index;
                                                   });
                                                 },
-                                                child: Text(isExpanded
-                                                    ? 'View Less'
-                                                    : 'View More'),
+                                                child: Text(
+                                                  isExpanded ? 'View Less' : 'View More',
+                                                  style: TextStyle(color: AppColors.kWhiteColor),
+                                                ),
                                               ),
                                             ],
                                           ),
 
                                           // Expandable Section
                                           AnimatedSize(
-                                            duration: const Duration(
-                                                milliseconds: 300),
+                                            duration: const Duration(milliseconds: 300),
                                             curve: Curves.easeInOut,
                                             child: isExpanded
                                                 ? Wrap(
                                                     spacing: 5,
                                                     runSpacing: 10,
-                                                    children: testData.packages
-                                                        .map((packageDetails) {
+                                                    children:
+                                                        testData.packages.map((packageDetails) {
                                                       return Container(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                .symmetric(
-                                                                vertical: 5,
-                                                                horizontal: 10),
-                                                        decoration:
-                                                            BoxDecoration(
-                                                          border: Border.all(
-                                                              color:
-                                                                  Colors.grey),
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(10),
+                                                        padding: const EdgeInsets.symmetric(
+                                                            vertical: 5, horizontal: 10),
+                                                        decoration: BoxDecoration(
+                                                          border:
+                                                              Border.all(color: AppColors.kGrey300),
+                                                          borderRadius: BorderRadius.circular(10),
                                                         ),
                                                         child: Text(
-                                                            packageDetails
-                                                                .testName),
+                                                          packageDetails.testName,
+                                                          style: TextStyle(
+                                                            color: AppColors.kWhiteColor,
+                                                          ),
+                                                        ),
                                                       );
                                                     }).toList(),
                                                   )
