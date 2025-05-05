@@ -9,6 +9,7 @@ import 'package:diagnostic_app/features/home/controller/notifier/expandable_cont
 import 'package:diagnostic_app/features/home/controller/pod/carousel_banner_pod.dart';
 import 'package:diagnostic_app/features/home/controller/pod/pathology_test_pod.dart';
 import 'package:diagnostic_app/features/home/controller/pod/view_cart_pod.dart';
+import 'package:diagnostic_app/features/home/view/widget/cart_key_sample_widget.dart';
 import 'package:diagnostic_app/features/home/view/widget/expandable_routine_test_widget.dart';
 import 'package:diagnostic_app/features/home/view/widget/home_page_carousel_widget.dart';
 import 'package:diagnostic_app/features/home_collection/controller/home_collection_test_pod.dart';
@@ -49,6 +50,11 @@ class _HomeViewState extends ConsumerState<HomeView> {
   int cartItemsCount = 0;
   @override
   Widget build(BuildContext context) {
+
+    final isUserLoggedIn = ref.watch(
+      userDetailsProvider.select((m) => m.loginData != null && m.loginData!.isNotEmpty),
+    );
+
     return SafeArea(
       child: Scaffold(
         drawer: Drawer(
@@ -174,31 +180,48 @@ class _HomeViewState extends ConsumerState<HomeView> {
             ),
           ),
           actions: [
-            // cart button
-            Consumer(
-              builder: (context, ref, child) {
-                final viewCartAsync = ref.watch(viewCartProvider);
-                return viewCartAsync.easyWhen(data: (viewCartModel) {
-                  return Badge(
-                    label: Text(viewCartModel.cartData.length.toString()),
-                    backgroundColor: AppColors.kErrorColor,
-                    child: IconButton(
-                      onPressed: () {
-                        context.navigateTo(
-                          CartRoute(
-                            cartItems: viewCartModel.cartData,
-                          ),
-                        );
-                      },
-                      icon: const Icon(
-                        Icons.shopping_cart,
-                        color: AppColors.kBlackColor,
+            isUserLoggedIn
+              ? Consumer(
+                builder: (context, ref, child) {
+                  final viewCartAsync = ref.watch(viewCartProvider);
+                  return viewCartAsync.easyWhen(data: (viewCartModel) {
+                    return Badge(
+                      label: Text(viewCartModel.cartData.length.toString()),
+                      backgroundColor: AppColors.kErrorColor,
+                      child: IconButton(
+                        onPressed: () {
+                          if(ref.read(userDetailsProvider.notifier).isLoggedIn()) {
+                            context.navigateTo(
+                              CartRoute(
+                                cartItems: viewCartModel.cartData,
+                              ),
+                            );
+                          }
+
+                          else {
+                            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Login to access cart details.")));
+                          }
+                          
+                        },
+                        icon: const Icon(
+                          Icons.shopping_cart,
+                          color: AppColors.kBlackColor,
+                        ),
                       ),
-                    ),
-                  );
-                });
-              },
-            ),
+                    );
+                  });
+                },
+              )
+              
+              : IconButton(
+                  onPressed: () {
+                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Login to access cart details.")));
+                  },
+                  icon: const Icon(
+                    Icons.shopping_cart,
+                    color: AppColors.kBlackColor,
+                  ),
+                ),
 
             const SizedBox(width: 10),
           ],
@@ -233,6 +256,9 @@ class _HomeViewState extends ConsumerState<HomeView> {
               spacing: 20,
               children: [
                 //carousel
+
+                const CartKeyScreen(),
+
                 Consumer(
                   builder: (context, ref, child) {
                     final carouselAsync = ref.watch(carouselBannerProvider);
@@ -263,6 +289,7 @@ class _HomeViewState extends ConsumerState<HomeView> {
                   ),
                 ).objectCenterLeft(),
                 //patho test
+
                 Consumer(
                   builder: (context, ref, child) {
                     final pathologyTestAsync = ref.watch(pathologyTestProvider);
@@ -316,13 +343,21 @@ class _HomeViewState extends ConsumerState<HomeView> {
                                               ),
                                               IconButton(
                                                 onPressed: () {
-                                                  print('Item added to cart');
-                                                  talker.debug("Response : hello added item");
-                                                  final response = ref
-                                                      .read(cartNotifierProvider.notifier)
-                                                      .addToCart(
-                                                          [1, int.tryParse(testData.price) ?? 0]);
-                                                  talker.debug("Response : $response");
+
+                                                  if(ref.read(userDetailsProvider.notifier).isLoggedIn()) {
+                                                    print('Item added to cart');
+                                                    talker.debug("Response : hello added item");
+                                                    final response = ref
+                                                        .read(cartNotifierProvider.notifier)
+                                                        .addToCart(
+                                                            [1, double.parse(testData.price).toInt()], testData.testName);
+                                                    talker.debug("Response : $response");
+                                                  }
+
+                                                  else {
+                                                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Login to push data in the cart."),));
+                                                  }
+                                                  
                                                 },
                                                 icon: const Icon(
                                                   Icons.add_shopping_cart_sharp,
@@ -340,7 +375,11 @@ class _HomeViewState extends ConsumerState<HomeView> {
                                               Text(
                                                 '₹${testData.price}',
                                                 style:
-                                                    const TextStyle(fontSize: 14),
+                                                    TextStyle(
+                                                      fontSize: 14,
+                                                      color: AppColors.kWhiteColor,
+                                                    ),
+
                                               ),
 
                                               TextButton(

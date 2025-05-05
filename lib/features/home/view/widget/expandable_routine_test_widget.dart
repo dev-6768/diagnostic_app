@@ -83,7 +83,10 @@ class _ExpandableRoutineTestGridState extends State<ExpandableRoutineTestGrid>
                                   children: [
                                   Text(
                                     '₹${data.price}',
-                                    style: const TextStyle(fontSize: 14),
+                                    style: const TextStyle(
+                                      fontSize: 14,
+                                      color: AppColors.kWhiteColor,
+                                    ),
                                   ),
 
 
@@ -125,11 +128,18 @@ class _ExpandableRoutineTestGridState extends State<ExpandableRoutineTestGrid>
                                       alignment: Alignment.bottomRight,
                                       child: IconButton(
                                         onPressed: () async {
-                                          talker.debug("Response : hello added item");
-                                          final response = ref
-                                              .read(cartNotifierProvider.notifier)
-                                              .addToCart([1, int.tryParse(data.price) ?? 0]);
-                                          talker.debug("Response : $response");
+                                          if(ref.read(userDetailsProvider.notifier).isLoggedIn()) {
+                                            talker.debug("Response : hello added item");
+                                            final response = ref
+                                                .read(cartNotifierProvider.notifier)
+                                                .addToCart([1, double.parse(data.price).toInt()], data.testName);
+                                            talker.debug("Response : $response");
+                                          }
+
+                                          else {
+                                            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("In order to add to cart, you need to login first.")));
+                                          }
+                                          
                                         },
                                         icon: const Icon(
                                           Icons.add_shopping_cart_sharp,

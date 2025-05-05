@@ -30,30 +30,30 @@ class PathologyTestView extends ConsumerWidget {
       appBar: AppBar(
         actions: [
           // cart button
-          Consumer(
-            builder: (context, ref, child) {
-              final viewCartAsync = ref.watch(viewCartProvider);
-              return viewCartAsync.easyWhen(data: (viewCartModel) {
-                return Badge(
-                  label: Text(viewCartModel.cartData.length.toString()),
-                  backgroundColor: AppColors.kErrorColor,
-                  child: IconButton(
-                    onPressed: () {
-                      context.navigateTo(
-                        CartRoute(
-                          cartItems: viewCartModel.cartData,
-                        ),
-                      );
-                    },
-                    icon: const Icon(
-                      Icons.shopping_cart,
-                      color: AppColors.kBlackColor,
-                    ),
-                  ),
-                );
-              });
-            },
-          ),
+          // Consumer(
+          //   builder: (context, ref, child) {
+          //     final viewCartAsync = ref.watch(viewCartProvider);
+          //     return viewCartAsync.easyWhen(data: (viewCartModel) {
+          //       return Badge(
+          //         label: Text(viewCartModel.cartData.length.toString()),
+          //         backgroundColor: AppColors.kErrorColor,
+          //         child: IconButton(
+          //           onPressed: () {
+          //             context.navigateTo(
+          //               CartRoute(
+          //                 cartItems: viewCartModel.cartData,
+          //               ),
+          //             );
+          //           },
+          //           icon: const Icon(
+          //             Icons.shopping_cart,
+          //             color: AppColors.kBlackColor,
+          //           ),
+          //         ),
+          //       );
+          //     });
+          //   },
+          // ),
           //a popup menu button that shows options
           Consumer(
             builder: (context, ref, child) {

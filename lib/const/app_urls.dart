@@ -11,7 +11,6 @@ class AppUrls {
   static const String getPathoTest = '/webservice/service.php?action=pathology_test';
   static const String getAboutUs = '/webservice/service.php?action=content&page=about_us';
   static const String getContactDetails = '/webservice/service.php?action=contact_details';
-  static const String getCart = '/webservice/service.php?action=view_cart&user_id=1&unique_id=11111111111';
   static const String deleteCart = '/webservice/service.php?action=delete_item&cart_id';
 
 }

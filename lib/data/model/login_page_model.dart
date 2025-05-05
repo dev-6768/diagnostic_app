@@ -90,27 +90,27 @@ class LoginDatum {
     String toJson() => json.encode(toMap());
 
     factory LoginDatum.fromMap(Map<String, dynamic> json) => LoginDatum(
-        userId: json["user_id"],
-        fname: json["fname"],
-        lname: json["lname"],
-        email: json["email"],
-        phone: json["phone"],
-        address: json["address"],
-        city: json["city"],
-        state: json["state"],
-        zip: json["zip"],
+        userId: json["user_id"] ?? "1",
+        fname: json["fname"] ?? "Unknown",
+        lname: json["lname"] ?? "Unknown",
+        email: json["email"] ?? "anonymous",
+        phone: json["phone"] ?? "anonymous",
+        address: json["address"] ?? "anonymous",
+        city: json["city"] ?? "anonymous",
+        state: json["state"] ?? "anonymous",
+        zip: json["zip"] ?? "000000",
     );
 
     Map<String, dynamic> toMap() => {
-        "user_id": userId,
-        "fname": fname,
-        "lname": lname,
-        "email": email,
-        "phone": phone,
-        "address": address,
-        "city": city,
-        "state": state,
-        "zip": zip,
+        "user_id": userId ?? "1",
+        "fname": fname ?? "Unknown",
+        "lname": lname ?? "Unknown",
+        "email": email ?? "anonymous",
+        "phone": phone ?? "anonymous",
+        "address": address ?? "anonymous",
+        "city": city ?? "anonymous",
+        "state": state ?? "anonymous",
+        "zip": zip ?? "000000",
     };
 
     @override

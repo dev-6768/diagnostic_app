@@ -50,7 +50,7 @@ class CartView extends StatelessWidget {
 
             body: viewCartModel.cartData == null || viewCartModel.cartData.isEmpty 
               ? const EmptyCartView()
-              : CartItemsView(totalPrice: totalPrice),      
+              : CartItemsView(totalPrice: double.parse(viewCartModel.priceData.totalPrice)),      
             
             bottomNavigationBar: cartItems.isEmpty ? null : CartBottomBar(totalPrice: double.parse(viewCartModel.priceData.totalPrice)),
           );

@@ -1,4 +1,5 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'package:diagnostic_app/core/local_storage/cart_id_storage_provider.dart';
 import 'package:diagnostic_app/data/model/login_page_model.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:diagnostic_app/data/network/api_helper_pod.dart';
@@ -6,10 +7,11 @@ import 'package:diagnostic_app/data/network/api_helper_pod.dart';
 final loginUserProvider =
     FutureProvider.autoDispose.family<LoginPageModel, LoginUserData>(
   (ref, loginUserData) async {
+    final cartIdProvider = ref.watch(cartKeyServiceProvider);
     final result = await ref.watch(apiHelperProvider).loginUser(
       userName: loginUserData.userName,
       password: loginUserData.password,
-      uniqueId: loginUserData.uniqueId,
+      uniqueId: cartIdProvider.getCartKey() ?? "1111111",
     );
 
 

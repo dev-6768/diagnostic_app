@@ -27,9 +27,9 @@ class CartNotifier extends StateNotifier<AsyncValue<ViewCartModel>> {
     }
   }
   
-  Future<void> addToCart(List<int> cartItemData) async {
+  Future<void> addToCart(List<int> cartItemData, String testName) async {
     try {
-      await ref.read(addToCartProvider(AddToCartRequestData(quantity: cartItemData[0], price: cartItemData[1].toDouble(), testName: "abc")).future);
+      await ref.read(addToCartProvider(AddToCartRequestData(quantity: cartItemData[0], price: cartItemData[1].toDouble(), testName: testName)).future);
       ref.invalidate(viewCartProvider);
       await _loadCart();
     } 

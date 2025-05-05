@@ -33,8 +33,8 @@ class ViewCartModel {
     factory ViewCartModel.fromMap(Map<String, dynamic> json) => ViewCartModel(
         cartData: List<CartData>.from((json["CartData"] ?? []).map((x) => CartData.fromMap(x))),
         priceData: PriceData.fromMap((json["PriceData"] ?? {})),
-        ack: json["Ack"],
-        msg: json["msg"],
+        ack: json["Ack"] ?? "0",
+        msg: json["msg"] ?? "No Data",
     );
 
     Map<String, dynamic> toMap() => {
