@@ -1,4 +1,6 @@
+import 'package:diagnostic_app/core/router/router.gr.dart';
 import 'package:flutter/material.dart';
+import 'package:auto_route/auto_route.dart';
 
 class MessageDialog extends StatelessWidget {
   const MessageDialog({super.key});
@@ -45,12 +47,15 @@ class MessageDialog extends StatelessWidget {
           onPressed: () {
             // Send message logic would go here
             Navigator.of(context).pop();
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Message sent successfully!'),
-                backgroundColor: Colors.green,
-              ),
-            );
+
+            context.navigateTo(ActionStatusRoute(isSuccess: true, message : "Order placed successfully."));
+
+            // ScaffoldMessenger.of(context).showSnackBar(
+            //   const SnackBar(
+            //     content: Text('Message sent successfully!'),
+            //     backgroundColor: Colors.green,
+            //   ),
+            // );
           },
           child: const Text('Send'),
         ),

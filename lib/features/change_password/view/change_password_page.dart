@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:diagnostic_app/core/router/router.gr.dart';
 import 'package:diagnostic_app/features/change_password/controller/change_password_pod.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -101,7 +102,9 @@ class _ChangePasswordPageState extends ConsumerState<ChangePasswordPage>
       ref: ref,
     );
     if (ref.read(changePasswordProvider).status == ChangePasswordStatus.success) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Password changed successfully."),));
+      context.navigateTo(ActionStatusRoute(isSuccess: true, message : "Password changed successfully."));
+      //ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Password changed successfully."),));
+
     }
   }
 

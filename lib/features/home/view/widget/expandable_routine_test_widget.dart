@@ -1,5 +1,6 @@
 import 'package:diagnostic_app/bootstrap.dart';
 import 'package:diagnostic_app/const/styles/app_colors.dart';
+import 'package:diagnostic_app/core/router/router.gr.dart';
 import 'package:diagnostic_app/features/cart/controller/pod/cart_notifier_pod.dart';
 import 'package:diagnostic_app/features/home/controller/pod/routine_test_pod.dart';
 import 'package:diagnostic_app/features/home_collection/controller/home_collection_test_pod.dart';
@@ -7,6 +8,7 @@ import 'package:diagnostic_app/features/login_page/controller/login_notifier.dar
 import 'package:diagnostic_app/shared/riverpod_ext/asynvalue_easy_when.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:auto_route/auto_route.dart';
 
 class ExpandableRoutineTestGrid extends StatefulWidget {
   const ExpandableRoutineTestGrid({super.key});
@@ -102,7 +104,9 @@ class _ExpandableRoutineTestGridState extends State<ExpandableRoutineTestGrid>
                                           )
                                         ));
 
-                                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Test booked.")));
+                                        context.navigateTo(ActionStatusRoute(isSuccess: true, message : "Test booked successfully"));
+
+                                        //ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Test booked.")));
                                       }
 
                                       else {

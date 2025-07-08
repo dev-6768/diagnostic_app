@@ -4,6 +4,7 @@ import 'package:diagnostic_app/bootstrap.dart';
 import 'package:diagnostic_app/const/app_urls.dart';
 import 'package:diagnostic_app/const/styles/app_colors.dart';
 import 'package:diagnostic_app/core/router/router.gr.dart';
+import 'package:diagnostic_app/data/model/view_cart_model.dart';
 import 'package:diagnostic_app/features/cart/controller/pod/cart_notifier_pod.dart';
 import 'package:diagnostic_app/features/home/controller/notifier/expandable_controller.dart';
 import 'package:diagnostic_app/features/home/controller/pod/carousel_banner_pod.dart';
@@ -115,7 +116,8 @@ class _HomeViewState extends ConsumerState<HomeView> {
                 title: const Text('Logout'),
                 onTap: () {
                   ref.read(userDetailsProvider.notifier).clear();
-                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("User logged out.")));
+                  context.navigateTo(ActionStatusRoute(isSuccess: true, message : "User logged out."));
+                  //ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("User logged out.")));
                 },
               ),
 
@@ -142,7 +144,19 @@ class _HomeViewState extends ConsumerState<HomeView> {
                   }
 
                   else {
-                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("User not logged in.")));
+                    context.pushRoute(
+                      LoginRoute(
+                        onLoginSuccess: () {
+                          context.navigateTo(
+                            ChangePasswordRoute(),
+                          );
+                          
+                          //ref.read(cartProvider.notifier).addItem(...); // Example
+                        },
+                      ),
+                    );
+
+                    //ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("User not logged in.")));
                   }
                   
                 },
@@ -160,7 +174,79 @@ class _HomeViewState extends ConsumerState<HomeView> {
                   }
 
                   else {
-                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("User not logged in.")));
+                    context.pushRoute(
+                      LoginRoute(
+                        onLoginSuccess: () {
+                          context.navigateTo(
+                            AppointmentBookingRoute(),
+                          );
+                          //ref.read(cartProvider.notifier).addItem(...); // Example
+                        },
+                      ),
+                    );
+
+                    //ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("User not logged in.")));
+                  }
+                },
+              ),
+
+
+              ListTile(
+                leading: const Icon(Icons.person),
+                title: const Text('Edit Profile'),
+                onTap: () {
+                  if(ref.read(userDetailsProvider.notifier).isLoggedIn()) {
+                    context.navigateTo(
+                      ProfileRoute(),
+                    );
+                  }
+
+                  else {
+                    context.pushRoute(
+                      LoginRoute(
+                        onLoginSuccess: () {
+                          context.navigateTo(
+                            ProfileRoute(),
+                          );
+                          
+                          //ref.read(cartProvider.notifier).addItem(...); // Example
+                        },
+                      ),
+                    );
+
+                    //ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("User not logged in.")));
+                  }
+                  
+                },
+              ),
+
+
+              ListTile(
+                leading: const Icon(Icons.person),
+                title: const Text('My Orders'),
+                onTap: () {
+                  // Navigate to Settings
+                  if(ref.read(userDetailsProvider.notifier).isLoggedIn()) {
+                    context.navigateTo(
+                      OrdersRoute(),
+                    );
+                  }
+
+                  else {
+
+                    context.pushRoute(
+                      LoginRoute(
+                        onLoginSuccess: () {
+                          // Put the post-login logic here
+                          context.navigateTo(
+                            OrdersRoute(),
+                          );
+                        },
+                      ),
+                    );
+
+
+                    //ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("User not logged in.")));
                   }
                 },
               ),
@@ -199,7 +285,21 @@ class _HomeViewState extends ConsumerState<HomeView> {
                           }
 
                           else {
-                            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Login to access cart details.")));
+                            context.pushRoute(
+                              LoginRoute(
+                                onLoginSuccess: () {
+                                  // Put the post-login logic here
+                                  context.navigateTo(
+                                    CartRoute(
+                                      cartItems: viewCartModel.cartData,
+                                    ),
+                                  );
+                                  
+                                },
+                              ),
+                            );
+
+                            //ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Login to access cart details.")));
                           }
                           
                         },
@@ -215,7 +315,20 @@ class _HomeViewState extends ConsumerState<HomeView> {
               
               : IconButton(
                   onPressed: () {
-                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Login to access cart details.")));
+                    context.pushRoute(
+                      LoginRoute(
+                        onLoginSuccess: () {
+                          // Put the post-login logic here
+                          context.navigateTo(
+                            CartRoute(
+                              cartItems: [CartData(cartId: "0", testName: "Anonymous", quantity: '0', unitPrice: '0', subtotal: '0')],
+                            ),
+                          );
+                          
+                        },
+                      ),
+                    );
+                    //ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Login to access cart details.")));
                   },
                   icon: const Icon(
                     Icons.shopping_cart,
@@ -355,7 +468,21 @@ class _HomeViewState extends ConsumerState<HomeView> {
                                                   }
 
                                                   else {
-                                                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Login to push data in the cart."),));
+                                                    context.pushRoute(
+                                                      LoginRoute(
+                                                        onLoginSuccess: () {
+                                                          // Put the post-login logic here
+                                                          print('Item added to cart');
+                                                          talker.debug("Response : hello added item");
+                                                          final response = ref
+                                                              .read(cartNotifierProvider.notifier)
+                                                              .addToCart(
+                                                                  [1, double.parse(testData.price).toInt()], testData.testName);
+                                                          talker.debug("Response : $response");
+                                                        },
+                                                      ),
+                                                    );
+                                                    //ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Login to push data in the cart."),));
                                                   }
                                                   
                                                 },
@@ -394,11 +521,31 @@ class _HomeViewState extends ConsumerState<HomeView> {
                                                       )
                                                     ));
 
-                                                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Test booked.")));
+                                                    context.navigateTo(ActionStatusRoute(isSuccess: true, message : "Test booked successfully."));
+                                                    
+
+                                                    //ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Test booked.")));
                                                   }
 
                                                   else {
-                                                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("In order to book a test, you need to login first.")));
+                                                    context.pushRoute(
+                                                      LoginRoute(
+                                                        onLoginSuccess: () {
+                                                          ref.read(homeCollectionTestBookingProvider(
+                                                            HomeCollectionBookingTestData(
+                                                              name: ref.read(userDetailsProvider.notifier).getLoginDetails().loginData![0].fname ?? "Unknown", 
+                                                              email: ref.read(userDetailsProvider.notifier).getLoginDetails().loginData![0].email ?? "Unknown", 
+                                                              phone: ref.read(userDetailsProvider.notifier).getLoginDetails().loginData![0].phone ?? "Unknown", 
+                                                              testName: testData.testName,
+                                                            )
+                                                          ));
+                                                          // Put the post-login logic here
+                                                          //ref.read(cartProvider.notifier).addItem(...); // Example
+                                                        },
+                                                      ),
+                                                    );
+
+                                                    //ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("In order to book a test, you need to login first.")));
                                                   }
                                                   
                                                 },

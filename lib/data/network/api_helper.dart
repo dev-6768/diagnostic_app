@@ -12,12 +12,16 @@ import 'package:diagnostic_app/data/model/forgot_password_model.dart';
 import 'package:diagnostic_app/data/model/home_collection_booking_model.dart';
 import 'package:diagnostic_app/data/model/home_collection_test_model.dart';
 import 'package:diagnostic_app/data/model/login_page_model.dart';
+import 'package:diagnostic_app/data/model/order_report_model.dart';
+import 'package:diagnostic_app/data/model/order_tracking_model.dart';
+import 'package:diagnostic_app/data/model/orders_model.dart';
 import 'package:diagnostic_app/data/model/pathology_test_model.dart';
 import 'package:diagnostic_app/data/model/routine_test_model.dart';
 import 'package:diagnostic_app/data/model/signup_page_model.dart';
 import 'package:diagnostic_app/data/model/update_cart_response_model.dart';
 import 'package:diagnostic_app/data/model/add_to_cart_model.dart';
 import 'package:diagnostic_app/data/model/view_cart_model.dart';
+import 'package:diagnostic_app/data/model/edit_profile_model.dart';
 import 'package:diagnostic_app/shared/exception/base_exception.dart';
 import 'package:dio/dio.dart';
 import 'package:multiple_result/multiple_result.dart';
@@ -239,6 +243,62 @@ class ApiHelper {
       return Error(APIException.fromMap(result.data));
     }
   }
+
+
+  //order api endpoint
+  Future<Result<OrderDataModel, APIException>> userOrders({required String userId}) async {
+    final result = await dio.get("https://sanitascare.health/webservice/service.php?action=my_orders&user_id=$userId");
+    if (result.statusCode == 200 || result.statusCode == 201) {
+      final parsedJson = jsonDecode(result.data);
+      return Success(OrderDataModel.fromMap(parsedJson));
+    } 
+    
+    else {
+      return Error(APIException.fromMap(result.data));
+    }
+  }
+
+  Future<Result<TrackDataModel, APIException>> userOrderTracking({required String userId, required String orderId}) async {
+    final result = await dio.get("https://sanitascare.health/webservice/service.php?action=tracking&user_id=$userId&order_id=$orderId");
+    if (result.statusCode == 200 || result.statusCode == 201) {
+      final parsedJson = jsonDecode(result.data);
+      return Success(TrackDataModel.fromMap(parsedJson));
+    } 
+    
+    else {
+      return Error(APIException.fromMap(result.data));
+    }
+  }
+
+
+
+  Future<Result<ReportDataModel, APIException>> userOrderReport({required String userId, required String orderId}) async {
+    final result = await dio.get("https://sanitascare.health/webservice/service.php?action=reports&user_id=$userId&order_id=$orderId");
+    if (result.statusCode == 200 || result.statusCode == 201) {
+      final parsedJson = jsonDecode(result.data);
+      return Success(ReportDataModel.fromMap(parsedJson));
+    } 
+    
+    else {
+      return Error(APIException.fromMap(result.data));
+    }
+  }
+
+
+  Future<Result<EditProfileModel, APIException>> editUserProfile({required String fName, required String lName, required String email, required String phone, required String address, required String city, required String state, required String zip, required String userId}) async {
+    final result = await dio.get("https://sanitascare.health/webservice/service.php?action=edit_profile&fname=$fName&lname=$lName&email=$email&phone=$phone&address=$address&city=$city&state=$state&zip=$zip&user_id=$userId");
+    if (result.statusCode == 200 || result.statusCode == 201) {
+      final parsedJson = jsonDecode(result.data);
+      return Success(EditProfileModel.fromMap(parsedJson));
+    } 
+    
+    else {
+      return Error(APIException.fromMap(result.data));
+    }
+  }
+
+  
+
 }
 
 /*

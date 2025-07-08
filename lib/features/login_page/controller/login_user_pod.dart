@@ -7,6 +7,7 @@ import 'package:diagnostic_app/data/network/api_helper_pod.dart';
 final loginUserProvider =
     FutureProvider.autoDispose.family<LoginPageModel, LoginUserData>(
   (ref, loginUserData) async {
+    
     final cartIdProvider = ref.watch(cartKeyServiceProvider);
     final result = await ref.watch(apiHelperProvider).loginUser(
       userName: loginUserData.userName,

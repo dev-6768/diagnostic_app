@@ -47,19 +47,19 @@ class LoginDatum {
     final String? phone;
     final String? address;
     final String? city;
-    final String? state;
+    final String? geoState;
     final String? zip;
 
     LoginDatum({
-        this.userId,
-        this.fname,
-        this.lname,
-        this.email,
-        this.phone,
-        this.address,
-        this.city,
-        this.state,
-        this.zip,
+      this.userId,
+      this.fname,
+      this.lname,
+      this.email,
+      this.phone,
+      this.address,
+      this.city,
+      this.geoState,
+      this.zip,
     });
 
     LoginDatum copyWith({
@@ -70,19 +70,19 @@ class LoginDatum {
         String? phone,
         String? address,
         String? city,
-        String? state,
+        String? geoState,
         String? zip,
     }) => 
         LoginDatum(
-            userId: userId ?? this.userId,
-            fname: fname ?? this.fname,
-            lname: lname ?? this.lname,
-            email: email ?? this.email,
-            phone: phone ?? this.phone,
-            address: address ?? this.address,
-            city: city ?? this.city,
-            state: state ?? this.state,
-            zip: zip ?? this.zip,
+          userId: userId ?? this.userId,
+          fname: fname ?? this.fname,
+          lname: lname ?? this.lname,
+          email: email ?? this.email,
+          phone: phone ?? this.phone,
+          address: address ?? this.address,
+          city: city ?? this.city,
+          geoState: geoState ?? this.geoState,
+          zip: zip ?? this.zip,
         );
 
     factory LoginDatum.fromJson(String str) => LoginDatum.fromMap(json.decode(str));
@@ -97,7 +97,7 @@ class LoginDatum {
         phone: json["phone"] ?? "anonymous",
         address: json["address"] ?? "anonymous",
         city: json["city"] ?? "anonymous",
-        state: json["state"] ?? "anonymous",
+        geoState: json["state"] ?? "anonymous",
         zip: json["zip"] ?? "000000",
     );
 
@@ -109,12 +109,12 @@ class LoginDatum {
         "phone": phone ?? "anonymous",
         "address": address ?? "anonymous",
         "city": city ?? "anonymous",
-        "state": state ?? "anonymous",
+        "state": geoState ?? "anonymous",
         "zip": zip ?? "000000",
     };
 
     @override
     String toString() {
-      return 'LoginDatum(userId : $userId, fname : $fname, lname : $lname, email : $email, phone : $phone, address : $address, city : $city, state : $state, zip : $zip)';
+      return 'LoginDatum(userId : $userId, fname : $fname, lname : $lname, email : $email, phone : $phone, address : $address, city : $city, geoState : $geoState, zip : $zip)';
     }
 }

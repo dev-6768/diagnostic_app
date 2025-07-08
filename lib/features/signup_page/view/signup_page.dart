@@ -1,5 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:diagnostic_app/bootstrap.dart';
+import 'package:diagnostic_app/core/router/router.gr.dart';
 import 'package:diagnostic_app/features/signup_page/controller/signup_user_pod.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -124,7 +125,8 @@ class _SignupPageState extends ConsumerState<SignupPage> with SingleTickerProvid
     );
 
     if (ref.read(signupProvider).status == AuthStatus.success) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("User signed up successfully")));
+      context.navigateTo(ActionStatusRoute(isSuccess: true, message : "User Signed Up Successfully."));
+      //ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("User signed up successfully")));
     }
   }
 

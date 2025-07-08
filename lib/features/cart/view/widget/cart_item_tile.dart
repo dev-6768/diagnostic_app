@@ -1,4 +1,5 @@
 import 'package:diagnostic_app/bootstrap.dart';
+import 'package:diagnostic_app/core/router/router.gr.dart';
 import 'package:diagnostic_app/features/cart/controller/pod/cart_notifier_pod.dart';
 import 'package:diagnostic_app/features/cart/controller/pod/delete_cart_pod.dart';
 import 'package:diagnostic_app/features/cart/controller/pod/update_cart_pod.dart';
@@ -6,6 +7,7 @@ import 'package:diagnostic_app/features/cart/view/widget/quantity_button.dart';
 import 'package:diagnostic_app/shared/riverpod_ext/asynvalue_easy_when.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:auto_route/auto_route.dart';
 
 class CartItemTile extends StatelessWidget {
   final String cartId;
@@ -130,11 +132,14 @@ class CartItemTile extends StatelessWidget {
                     onTap: () async {
                       await ref.read(cartNotifierProvider.notifier).deleteCart(int.tryParse(cartId) ?? 0);
                       // Remove item functionality would go here
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Item removed from cart. Please refresh page'),
-                        ),
-                      );
+
+                      context.navigateTo(ActionStatusRoute(isSuccess: true, message : "Item removed from cart."));
+
+                      // ScaffoldMessenger.of(context).showSnackBar(
+                      //   const SnackBar(
+                      //     content: Text('Item removed from cart. Please refresh page'),
+                      //   ),
+                      // );
                     },
                     child: const Row(
                       children: [

@@ -1,6 +1,9 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:diagnostic_app/bootstrap.dart';
+import 'package:diagnostic_app/core/router/router.gr.dart';
+import 'package:diagnostic_app/data/model/login_page_model.dart';
 import 'package:diagnostic_app/features/checkout/controller/checkout_pod.dart';
+import 'package:diagnostic_app/features/login_page/controller/login_notifier.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -69,7 +72,9 @@ class _CheckoutPageState extends ConsumerState<CheckoutPage>
         )
       ).future);
 
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Order placed successfully.")));
+      context.navigateTo(ActionStatusRoute(isSuccess: true, message : "Order placed successfully."));
+
+      //ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Order placed successfully.")));
 
       talker.debug(formData);
       
@@ -113,13 +118,47 @@ class _CheckoutPageState extends ConsumerState<CheckoutPage>
                           style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
                         ),
                         const SizedBox(height: 24),
-                        _buildTextField('First Name', 'fName'),
-                        _buildTextField('Last Name', 'lName'),
-                        _buildTextField('Email', 'email', keyboardType: TextInputType.emailAddress),
-                        _buildTextField('Phone', 'phone', keyboardType: TextInputType.phone),
-                        _buildTextField('Address', 'address'),
-                        _buildTextField('City', 'city'),
-                        _buildTextField('State', 'state'),
+                        _buildTextField(
+                          'First Name', 
+                          'fName', 
+                          (ref.read(userDetailsProvider.notifier).getLoginDetails().loginData ?? [LoginDatum()])[0].fname ?? ""
+                        ),
+
+                        _buildTextField(
+                          'Last Name', 
+                          'lName', 
+                          (ref.read(userDetailsProvider.notifier).getLoginDetails().loginData ?? [LoginDatum()])[0].lname ?? ""
+                        ),
+
+                        _buildTextField(
+                          'Email', 
+                          'email', 
+                          (ref.read(userDetailsProvider.notifier).getLoginDetails().loginData ?? [LoginDatum()])[0].email ?? "", keyboardType: TextInputType.emailAddress
+                        ),
+
+                        _buildTextField(
+                          'Phone', 
+                          'phone', 
+                          (ref.read(userDetailsProvider.notifier).getLoginDetails().loginData ?? [LoginDatum()])[0].phone ?? "", keyboardType: TextInputType.phone
+                        ),
+
+                        _buildTextField(
+                          'Address', 
+                          'address', 
+                          (ref.read(userDetailsProvider.notifier).getLoginDetails().loginData ?? [LoginDatum()])[0].address ?? ""
+                        ),
+
+                        _buildTextField(
+                          'City', 
+                          'city', 
+                          (ref.read(userDetailsProvider.notifier).getLoginDetails().loginData ?? [LoginDatum()])[0].city ?? ""
+                        ),
+
+                        _buildTextField(
+                          'State', 
+                          'state', 
+                          (ref.read(userDetailsProvider.notifier).getLoginDetails().loginData ?? [LoginDatum()])[0].geoState ?? ""
+                        ),
                         const SizedBox(height: 24),
                         SizedBox(
                           width: double.infinity,
@@ -152,11 +191,12 @@ class _CheckoutPageState extends ConsumerState<CheckoutPage>
   }
 
   Widget _buildTextField(String label, String key,
-      {TextInputType keyboardType = TextInputType.text}) {
+       String initialText, {TextInputType keyboardType = TextInputType.text}) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 16.0),
       child: TextFormField(
         keyboardType: keyboardType,
+        controller: TextEditingController(text: initialText),
         decoration: InputDecoration(
           labelText: label,
           prefixIcon: const Icon(Icons.person),
